@@ -1,27 +1,32 @@
-import { type CSSProperties } from 'react';
-
 export type AnyIntrinsicElementTag = keyof JSX.IntrinsicElements;
 export type AnyIntrinsicElement = JSX.IntrinsicElements[AnyIntrinsicElementTag];
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type IntrinsicProps = KeysOfUnion<AnyIntrinsicElement>;
-export const properties = {} satisfies Partial<Record<IntrinsicProps, string>>;
-export const attributes = {
-	x: 'x',
-	y: 'y',
-	width: 'width',
-	height: 'height',
-	transform: 'transform',
-	d: 'd',
-	strokeWidth: 'stroke-width',
-} satisfies Partial<Record<IntrinsicProps, string>>;
-export const styles = {} satisfies Partial<Record<keyof CSSProperties, string>>;
+export type MappingKeys = IntrinsicProps;
 
-export function isPropertyKey(s: string): s is keyof typeof styles {
-	return s in properties;
+export type CompleteMapping<T extends MappingKeys> = Record<
+	T,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	(elem: Element) => (value: any) => void
+>;
+
+export type PartialMapping = Partial<CompleteMapping<MappingKeys>>;
+
+export function mapProperty<TElem extends Element, TProp extends keyof TElem>(
+	propName: TProp
+) {
+	return (elem: TElem) => (value: TElem[TProp]) => (elem[propName] = value);
 }
-export function isAttributeKey(s: string): s is keyof typeof attributes {
-	return s in attributes;
+export function mapAttribute<
+	TElem extends Element,
+	TAttr extends Parameters<TElem['setAttribute']>[0]
+>(attrName: TAttr) {
+	return (elem: TElem) => (value: string) => elem.setAttribute(attrName, value);
 }
-export function isStyleKey(s: string): s is keyof typeof properties {
-	return s in styles;
+export function mapStyle<
+	TElem extends ElementCSSInlineStyle,
+	TStyle extends Parameters<TElem['style']['setProperty']>[0]
+>(styleName: TStyle) {
+	return (elem: TElem) => (value: unknown) =>
+		elem.style.setProperty(styleName, value?.toString() ?? null);
 }

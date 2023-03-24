@@ -7,7 +7,7 @@ export function tweenedSignal(
 	store: SignalStore,
 	original: Atom<number>,
 	easing: EasingFunction,
-	duration: number = 300
+	duration = 300
 ) {
 	const initial = store.get(original);
 	const easingFunctionOrConst = atom<ReturnType<typeof toEased> | number>(

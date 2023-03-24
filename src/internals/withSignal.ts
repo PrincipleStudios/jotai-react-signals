@@ -10,12 +10,9 @@ import {
 import { useSignalStore, SignalStore } from './context';
 import { isSignal } from './utils';
 import {
-	styles,
-	isStyleKey,
-	properties,
-	isPropertyKey,
-	attributes,
-	isAttributeKey,
+	mapStyle,
+	type MappingKeys,
+	type CompleteMapping,
 	type AnyIntrinsicElementTag,
 	type AnyIntrinsicElement,
 } from './withSignal.mappings';
@@ -29,27 +26,28 @@ type MaybeSignal<T> = T | Atom<T>;
 type CSSPropertiesWithSignal = {
 	[K in keyof CSSProperties | `--${string}`]?: K extends `--${string}`
 		? MaybeSignal<string | number>
-		: K extends keyof typeof styles
-		? MaybeSignal<CSSProperties[K]>
 		: K extends keyof CSSProperties
-		? CSSProperties[K]
+		? MaybeSignal<CSSProperties[K]>
 		: never;
 };
 
-type WithSignalProps<T extends AnyIntrinsicElement> = {
+type WithSignalProps<
+	T extends AnyIntrinsicElement,
+	TMapped extends MappingKeys
+> = {
 	[K in keyof T]: K extends 'style'
 		? T[K] extends CSSProperties | undefined
 			? CSSPropertiesWithSignal | undefined
 			: T[K]
-		: K extends keyof typeof attributes | keyof typeof properties
+		: K extends TMapped
 		? MaybeSignal<T[K]>
 		: T[K];
 };
 
-function toPropsObj<T extends { style?: CSSProperties }>(
-	get: Getter,
-	props: WithSignalProps<T>
-): T {
+function toPropsObj<
+	T extends { style?: CSSProperties },
+	TMapped extends MappingKeys
+>(get: Getter, props: WithSignalProps<T, TMapped>): T {
 	return Object.fromEntries(
 		Object.entries(props).map(([key, value]) => {
 			if (isSignal(value)) return [key, get(value as Atom<unknown>)];
@@ -57,10 +55,7 @@ function toPropsObj<T extends { style?: CSSProperties }>(
 				return [
 					'style',
 					Object.fromEntries(
-						Object.entries(value as CSSPropertiesWithSignal).map(([k, v]) => [
-							k,
-							isSignal(v) ? get(v) : v,
-						])
+						Object.entries(value).map(([k, v]) => [k, isSignal(v) ? get(v) : v])
 					),
 				];
 			return [key, value];
@@ -87,39 +82,32 @@ function useCombinedRefs<T>(...refs: React.ForwardedRef<T>[]) {
 	return targetRef;
 }
 
-function toUpdater(
+function toUpdater<TMapped extends MappingKeys>(
 	elem: Element & ElementCSSInlineStyle,
-	key: string
+	key: string,
+	map: CompleteMapping<TMapped>
 ): (value: unknown) => void {
 	if (key.startsWith('style.')) {
 		const stylePart = key.split('.')[1];
-		if (isStyleKey(stylePart)) {
-			return (value) =>
-				elem.style.setProperty(styles[stylePart], value?.toString() ?? null);
-		} else if (stylePart.startsWith('--')) {
-			return (value) => {
-				return elem.style.setProperty(stylePart, value?.toString() ?? null);
-			};
-		}
-	} else if (isPropertyKey(key)) {
-		return (value) => ((elem as any)[properties[key]] = value);
-	} else if (isAttributeKey(key)) {
-		return (value) =>
-			elem.setAttribute(attributes[key], (value ?? '')?.toString());
+		return mapStyle(stylePart)(elem);
+	} else if (key in map) {
+		return map[key as keyof typeof map](elem);
 	}
-	console.warn(`unknown key:`, elem, key);
+	console.warn(`unknown key, unable to treat as signal:`, elem, key);
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	return () => {};
 }
 
 type Unsubscribe = () => void;
 
-function setupSetter(
+function setupSetter<TMapped extends MappingKeys>(
+	map: CompleteMapping<TMapped>,
 	elem: Element & ElementCSSInlineStyle,
 	store: SignalStore,
 	key: string,
 	value: Atom<unknown>
 ): Unsubscribe {
-	const applyUpdate = toUpdater(elem, key);
+	const applyUpdate = toUpdater(elem, key, map);
 	applyUpdate(store.get(value));
 	const unsub = store.sub(value, () => {
 		applyUpdate(store.get(value));
@@ -128,26 +116,28 @@ function setupSetter(
 }
 
 type SignalEntry = [key: string, value: Atom<unknown>];
-function toSignalEntries<T extends AnyIntrinsicElementTag>(
-	target: WithSignalProps<JSX.IntrinsicElements[T]>
-): SignalEntry[] {
+function toSignalEntries<
+	T extends AnyIntrinsicElementTag,
+	TMapped extends MappingKeys
+>(target: WithSignalProps<JSX.IntrinsicElements[T], TMapped>): SignalEntry[] {
 	return Object.entries(target).flatMap(([key, value]): SignalEntry[] => {
 		if (isSignal(value)) return [[key, value]];
 		else if (key === 'style')
-			return Object.entries(value as Object).flatMap(
-				([key, value]): SignalEntry[] => {
-					if (isSignal(value)) return [[`style.${key}`, value]];
-					return [];
-				}
-			);
+			return Object.entries(value).flatMap(([key, value]): SignalEntry[] => {
+				if (isSignal(value)) return [[`style.${key}`, value]];
+				return [];
+			});
 		else return [];
 	});
 }
 
-export function withSignal<T extends AnyIntrinsicElementTag>(elem: T) {
+export function withSignal<
+	T extends AnyIntrinsicElementTag,
+	TMapped extends MappingKeys
+>(elem: T, map: CompleteMapping<TMapped>) {
 	const result = memo(
 		forwardRef(function Signalled(
-			props: WithSignalProps<JSX.IntrinsicElements[T]>,
+			props: WithSignalProps<JSX.IntrinsicElements[T], TMapped>,
 			ref: React.ForwardedRef<T>
 		) {
 			const subscriptionRef = useRef<
@@ -166,7 +156,7 @@ export function withSignal<T extends AnyIntrinsicElementTag>(elem: T) {
 			useEffect(() => {
 				const elem = finalRef.current;
 				if (!elem) return;
-				const signalEntries = toSignalEntries<T>(props);
+				const signalEntries = toSignalEntries<T, TMapped>(props);
 				// unsubscribe from old signals
 				difference(
 					Object.keys(subscriptionRef.current),
@@ -190,7 +180,7 @@ export function withSignal<T extends AnyIntrinsicElementTag>(elem: T) {
 					// And subscribe the new
 					subscriptionRef.current[key] = [
 						value,
-						setupSetter(elem, store, key, value),
+						setupSetter(map, elem, store, key, value),
 					];
 				});
 			}, [props, finalRef, store]);

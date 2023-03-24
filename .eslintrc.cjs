@@ -10,11 +10,18 @@ module.exports = {
 			version: 'detect',
 		},
 	},
-	plugins: ['@typescript-eslint', 'react'],
+	plugins: ['@typescript-eslint', 'react', 'react-hooks'],
 	extends: [
-		'next/core-web-vitals',
+		// The order of these matter:
+		// eslint baseline
+		'eslint:recommended',
 		// disables eslint rules in favor of using prettier separately
 		'prettier',
+		// React-recommended, followed by tuning off needing to `import React from "react"`
+		'plugin:react/recommended',
+		'plugin:react/jsx-runtime',
+		// Recommended typescript changes, which removes some "no-undef" checks that TS handles
+		'plugin:@typescript-eslint/recommended',
 	],
 	rules: {},
 	ignorePatterns: ['/*.js*', '/*.cjs*'],
