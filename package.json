@@ -1,0 +1,59 @@
+{
+  "name": "jotai-react-signals",
+  "version": "0.1.0",
+  "description": "👻 React signals using Jotai",
+  "main": "dist/cjs/index.js",
+  "module": "dist/mjs/index.js",
+  "types": "dist/mjs/index.d.ts",
+  "exports": {
+      ".": {
+          "import": "./dist/mjs/index.js",
+          "require": "./dist/cjs/index.js"
+      }
+  },
+  "scripts": {
+    "prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
+    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "postbuild": "pwsh ./scripts/post-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install .husky",
+    "lint": "npm run typecheck && npm run eslint && npm run prettier",
+    "lint:fix": "npm run typecheck && npm run eslint:fix && npm run prettier:fix",
+    "eslint": "eslint \"src/**/*.{js,ts,tsx}\"",
+    "eslint:fix": "eslint \"src/**/*.{js,ts,tsx}\" --fix",
+    "prettier": "prettier --list-different \"src/**/*.{js,ts,tsx}\"",
+    "prettier:fix": "prettier --write \"src/**/*.{js,ts,tsx}\"",
+    "typecheck": "tsc --noemit"
+  },
+  "keywords": [
+    "react",
+    "state",
+    "jotai",
+    "store",
+    "signals"
+  ],
+  "author": "Matt DeKrey",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "eslint": "8.35.0",
+    "eslint-config-next": "13.2.3",
+    "eslint-config-prettier": "^8.6.0",
+    "husky": "^8.0.3",
+    "jest": "^29.5.0",
+    "jotai": "^2.0.3",
+    "lint-staged": "^13.1.2",
+    "prettier": "^2.8.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "^5.0.2"
+  },
+  "peerDependencies": {
+    "jotai": ">=2.0.0",
+    "react": ">=17.0.0"
+  }
+}
