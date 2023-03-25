@@ -2,18 +2,30 @@
   "name": "jotai-react-signals",
   "version": "0.1.0",
   "description": "👻 React signals using Jotai",
-  "main": "dist/cjs/index.js",
+  "main": "dist/index.js",
   "module": "dist/mjs/index.js",
-  "types": "dist/mjs/index.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/mjs/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/mjs/index.mjs"
+      },
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": {
+        "types": "./dist/*.d.ts",
+        "default": "./dist/mjs/*.mjs"
+      },
+      "default": "./dist/*.js"
     }
   },
   "scripts": {
     "prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
+    "build": "rollup -c",
     "postbuild": "pwsh ./scripts/post-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install .husky",
@@ -36,6 +48,14 @@
   "author": "Matt DeKrey",
   "license": "MIT",
   "devDependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.21.0",
+    "@babel/plugin-transform-typescript": "^7.21.3",
+    "@babel/preset-env": "^7.20.2",
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.0.0",
     "@types/jest": "^29.5.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
@@ -52,6 +72,8 @@
     "prettier": "^2.8.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "rollup": "^3.20.2",
+    "rollup-plugin-esbuild": "^5.0.0",
     "typescript": "^5.0.2"
   },
   "peerDependencies": {

@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import type { Atom, Getter } from 'jotai';
 import {
 	createElement,
@@ -7,7 +8,7 @@ import {
 	useEffect,
 	memo,
 } from 'react';
-import { useSignalStore, SignalStore } from './context';
+import { SignalStore } from './context';
 import { isSignal } from './utils';
 import {
 	mapStyle,
@@ -144,7 +145,7 @@ export function withSignal<
 				Record<string, [Atom<unknown>, Unsubscribe]>
 			>({});
 			const finalRef = useCombinedRefs(ref);
-			const store = useSignalStore();
+			const store = useStore();
 			const newProps = toPropsObj(store.get, props);
 
 			useEffect(() => {

@@ -1,16 +1,12 @@
 import { useEffect } from 'react';
-import { createStore, useStore, Provider, atom } from 'jotai';
+import { useStore, atom } from 'jotai';
 
-export type SignalStore = ReturnType<typeof createStore>;
-const signalStore: SignalStore = createStore();
+export type SignalStore = ReturnType<typeof useStore>;
 
 export const animationSignal = atom<number>(0);
 
-export function useSignalStore() {
-	return useStore();
-}
-
-export function SignalProvider({ children }: { children?: React.ReactNode }) {
+export function useAnimationSignalUpdates() {
+	const signalStore = useStore();
 	useEffect(() => {
 		const abort = new AbortController();
 		function animate(time: number) {
@@ -20,6 +16,5 @@ export function SignalProvider({ children }: { children?: React.ReactNode }) {
 		}
 		requestAnimationFrame(animate);
 		return () => abort.abort();
-	}, []);
-	return <Provider store={signalStore}>{children}</Provider>;
+	}, [signalStore]);
 }

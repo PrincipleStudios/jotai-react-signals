@@ -5,8 +5,11 @@ export {
 	useSignal,
 	useSignalState,
 } from './internals/hooks';
-export { useSignalStore, SignalProvider } from './internals/context';
-export type { SignalStore } from './internals/context';
+export {
+	animationSignal,
+	useAnimationSignalUpdates,
+	type SignalStore,
+} from './internals/context';
 export {
 	type MappingKeys,
 	type CompleteMapping,
