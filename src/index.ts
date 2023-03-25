@@ -1,10 +1,5 @@
 export { isSignal } from './internals/utils';
-export {
-	useComputedSignal,
-	useAsSignal,
-	useSignal,
-	useSignalState,
-} from './internals/hooks';
+export { useComputedSignal, useAsAtom } from './internals/hooks';
 export {
 	animationSignal,
 	useAnimationSignalUpdates,

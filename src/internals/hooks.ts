@@ -1,12 +1,5 @@
 import { useRef } from 'react';
-import {
-	type Atom,
-	type PrimitiveAtom,
-	atom,
-	useAtomValue,
-	useSetAtom,
-	Getter,
-} from 'jotai';
+import { type Atom, type PrimitiveAtom, atom, useSetAtom, Getter } from 'jotai';
 import { isSignal } from './utils';
 
 export function useComputedSignal<T>(compute: (get: Getter) => T): Atom<T> {
@@ -33,7 +26,7 @@ export function useComputedSignal<T>(compute: (get: Getter) => T): Atom<T> {
 }
 
 /** Creates a signal from a property that may change based on a React rerender */
-export function useAsSignal<T>(valueOrSignal: T | Atom<T>): Atom<T> {
+export function useAsAtom<T>(valueOrSignal: T | Atom<T>): Atom<T> {
 	const result = useRef<{
 		prevInput: typeof valueOrSignal;
 		base: PrimitiveAtom<T | Atom<T>>;
@@ -58,16 +51,4 @@ export function useAsSignal<T>(valueOrSignal: T | Atom<T>): Atom<T> {
 		setBase(valueOrSignal);
 	}
 	return result.current.output;
-}
-
-export function useSignalState<T>(initialValue: T) {
-	const signal = useRef<PrimitiveAtom<T>>();
-	if (!signal.current) {
-		signal.current = atom(initialValue);
-	}
-	return [signal.current, useSetAtom(signal.current)] as const;
-}
-
-export function useSignal<T>(signal: Atom<T>): T {
-	return useAtomValue(signal);
 }

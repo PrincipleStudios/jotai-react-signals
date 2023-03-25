@@ -1,5 +1,5 @@
 {
-  "name": "jotai-react-signals",
+  "name": "@mdekrey/jotai-react-signals",
   "version": "0.1.0",
   "description": "👻 React signals using Jotai",
   "main": "dist/index.js",
