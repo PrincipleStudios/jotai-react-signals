@@ -1,10 +1,17 @@
 {
   "name": "@mdekrey/jotai-react-signals",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "👻 React signals using Jotai",
   "main": "dist/index.js",
   "module": "dist/mjs/index.js",
   "types": "dist/index.d.ts",
+  "bugs": {
+    "url": "https://github.com/mdekrey/jotai-react-signals/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mdekrey/jotai-react-signals.git"
+  },
   "exports": {
     ".": {
       "import": {

@@ -139,7 +139,11 @@ export function withSignal<
 	const result = memo(
 		forwardRef(function Signalled(
 			props: WithSignalProps<JSX.IntrinsicElements[T], TMapped>,
-			ref: React.ForwardedRef<T>
+			ref: React.ForwardedRef<
+				JSX.IntrinsicElements[T] extends React.ClassAttributes<infer U>
+					? U
+					: never
+			>
 		) {
 			const subscriptionRef = useRef<
 				Record<string, [Atom<unknown>, Unsubscribe]>
