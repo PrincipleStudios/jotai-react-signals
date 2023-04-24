@@ -26,9 +26,9 @@ type MaybeSignal<T> = T | Atom<T>;
 
 type CSSPropertiesWithSignal = {
 	[K in keyof CSSProperties | `--${string}`]?: K extends `--${string}`
-		? MaybeSignal<string | number>
+		? string | number | Atom<string>
 		: K extends keyof CSSProperties
-		? MaybeSignal<CSSProperties[K]>
+		? CSSProperties[K] | Atom<string>
 		: never;
 };
 
