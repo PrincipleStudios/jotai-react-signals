@@ -84,9 +84,9 @@ describe('withSignal', () => {
 		});
 	});
 
-	describe('with r mapping on a circle', () => {
-		const BasicCircle = withSignal('circle', {
-			r: mapAttribute('r'),
+	describe('with tabIndex mapping on a input', () => {
+		const BasicInput = withSignal('input', {
+			tabIndex: mapAttribute('tabindex'),
 		});
 		const store = getDefaultStore();
 		const atomRadius = atom(15);
@@ -96,26 +96,26 @@ describe('withSignal', () => {
 		});
 
 		it('assigns props normally', () => {
-			const { container } = render(<BasicCircle r={15} />);
-			const circle: SVGCircleElement = container.firstChild as SVGCircleElement;
+			const { container } = render(<BasicInput tabIndex={15} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
 
-			expect(circle.getAttribute('r')).toBe('15');
+			expect(el.getAttribute('tabindex')).toBe('15');
 		});
 
 		it('initializes mapped property with value from signal', () => {
-			const { container } = render(<BasicCircle r={atomRadius} />);
-			const circle: SVGCircleElement = container.firstChild as SVGCircleElement;
+			const { container } = render(<BasicInput tabIndex={atomRadius} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
 
-			expect(circle.getAttribute('r')).toBe('15');
+			expect(el.getAttribute('tabindex')).toBe('15');
 		});
 
 		it('updates mapped property with value from signal', () => {
-			const { container } = render(<BasicCircle r={atomRadius} />);
-			const circle: SVGCircleElement = container.firstChild as SVGCircleElement;
+			const { container } = render(<BasicInput tabIndex={atomRadius} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
 
 			store.set(atomRadius, 30);
 
-			expect(circle.getAttribute('r')).toBe('30');
+			expect(el.getAttribute('tabindex')).toBe('30');
 		});
 	});
 });
