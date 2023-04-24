@@ -12,6 +12,7 @@ type Spy<T extends (...p: any[]) => any> = T extends (
 class RequestAnimationFrameMock {
 	private counter = 0;
 	private readonly registrations = new Map<number, FrameRequestCallback>();
+	private lastTick = 0;
 
 	public requestAnimationFrameSpy:
 		| Spy<typeof requestAnimationFrame>
@@ -51,8 +52,11 @@ class RequestAnimationFrameMock {
 	readonly tick = (time: DOMHighResTimeStamp) => {
 		const callbacks = Array.from(this.registrations.values());
 		this.registrations.clear();
+		this.lastTick = time;
 		callbacks.forEach((cb) => cb(time));
 	};
+
+	readonly getTick = () => this.lastTick;
 }
 
 describe('useAnimationSignalUpdates', () => {
