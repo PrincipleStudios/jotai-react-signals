@@ -24,6 +24,7 @@ export class RequestAnimationFrameMock {
 	readonly restore = () => {
 		this.requestAnimationFrameSpy?.mockRestore();
 		this.cancelAnimationFrameSpy?.mockRestore();
+		this.performanceNowSpy?.mockRestore();
 	};
 
 	get registrationCount() {

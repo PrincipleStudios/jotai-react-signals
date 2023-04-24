@@ -10,8 +10,8 @@ Included in this package:
   - `useComputedSignal` - same interface as Jotai's `computed`, but as a React hook with no dependencies
   - `useAsAtom` - converts a `T | Atom<T>` to an `Atom<T>` as a React hook, so your APIs can be flexible.
 - Utilities for animation
-  - `useAnimationSignalUpdates` - place once in your top-level App to update the `animationSignal`
-  - `animationSignal` - provides updates per `requestAnimationFrame`
+  - `animationSignal` - provides updates per `requestAnimationFrame` (must subscribe to the `animationSignal` or call `manuallyUpdateAnimationFrame`)
+  - `manuallyUpdateAnimationFrame` - function to manually trigger animationSignal updates when not subscribed (this prety well defeats the purpose of animations...)
   - `tweenedSignal` - tweens an `Atom<number>` via an `EasingFunction` (not provided, but see [tween.js](https://www.npmjs.com/package/@tweenjs/tween.js)'s `Easing` export for examples) using the `animationSignal`
 - Utilities for binding to elements
   - `withSignal` - takes the name of a React intrinsic element and a mapping of React props to functions to update the element to create a new component that will update your element in real-time.

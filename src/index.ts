@@ -2,7 +2,7 @@ export { isSignal } from './internals/utils';
 export { useComputedSignal, useAsAtom } from './internals/hooks';
 export {
 	animationSignal,
-	useAnimationSignalUpdates,
+	manuallyUpdateAnimationFrame,
 	type SignalStore,
 } from './internals/context';
 export {

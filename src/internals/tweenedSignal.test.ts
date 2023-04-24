@@ -1,27 +1,26 @@
-import { atom, getDefaultStore } from 'jotai';
+import { atom, createStore } from 'jotai';
 import { RequestAnimationFrameMock } from './mocks/RequestAnimationFrameMock';
 import { tweenedSignal } from './tweenedSignal';
-import { animationSignal, useAnimationSignalUpdates } from './context';
-import { renderHook } from '@testing-library/react';
+import { manuallyUpdateAnimationFrame } from './context';
 
 describe('tweenedSignal', () => {
 	const mockObj = new RequestAnimationFrameMock();
-	const store = getDefaultStore();
 	const atomA = atom(0);
 
 	beforeEach(() => {
-		store.set(atomA, 0);
 		mockObj.tick(0);
-		mockObj.spy();
-		renderHook(() => useAnimationSignalUpdates());
-		store.set(animationSignal, 0);
 	});
 
-	afterEach(() => {
+	beforeAll(() => {
+		mockObj.spy();
+	});
+
+	afterAll(() => {
 		mockObj?.restore();
 	});
 
 	it('defers a numeric signal based on an easing function', () => {
+		const store = createStore();
 		const target = tweenedSignal(store, atomA, (n) => n, 300);
 
 		expect(store.get(target)).toBe(0);
@@ -29,17 +28,22 @@ describe('tweenedSignal', () => {
 		expect(store.get(target)).toBe(0);
 		// start moving per tick
 		mockObj.tick(100);
+		manuallyUpdateAnimationFrame(store);
 		expect(store.get(target)).toBe(1);
 		mockObj.tick(200);
+		manuallyUpdateAnimationFrame(store);
 		expect(store.get(target)).toBe(2);
 		mockObj.tick(300);
+		manuallyUpdateAnimationFrame(store);
 		expect(store.get(target)).toBe(3);
 		// should not change or trigger subscription
 		mockObj.tick(400);
+		manuallyUpdateAnimationFrame(store);
 		expect(store.get(target)).toBe(3);
 	});
 
 	it('triggers subscription', () => {
+		const store = createStore();
 		const target = tweenedSignal(store, atomA, (n) => n, 300);
 
 		const values: number[] = [];
@@ -50,13 +54,14 @@ describe('tweenedSignal', () => {
 		try {
 			expect(store.get(target)).toBe(0);
 			store.set(atomA, 3);
+
 			// start moving per tick
 			mockObj.tick(100);
 			mockObj.tick(200);
 			mockObj.tick(300);
 			mockObj.tick(400);
-			expect(values).toEqual([1, 2, 3]);
 			expect(spy.mock.calls.length).toBe(3);
+			expect(values).toEqual([1, 2, 3]);
 			expect(store.get(target)).toBe(3);
 		} finally {
 			unsub();
@@ -64,6 +69,7 @@ describe('tweenedSignal', () => {
 	});
 
 	it('accepts quadratic ease-in easing functions', () => {
+		const store = createStore();
 		const target = tweenedSignal(store, atomA, (n) => n * n, 300);
 
 		const values: number[] = [];
@@ -88,6 +94,7 @@ describe('tweenedSignal', () => {
 	});
 
 	it('accepts alternate durations', () => {
+		const store = createStore();
 		const target = tweenedSignal(store, atomA, (n) => n, 500);
 
 		const values: number[] = [];

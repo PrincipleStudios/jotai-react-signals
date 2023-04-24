@@ -1,9 +1,8 @@
-import { renderHook } from '@testing-library/react';
-import { animationSignal, useAnimationSignalUpdates } from './context';
+import { animationSignal } from './context';
 import { getDefaultStore } from 'jotai';
 import { RequestAnimationFrameMock } from './mocks/RequestAnimationFrameMock';
 
-describe('useAnimationSignalUpdates', () => {
+describe('animationSignal', () => {
 	const mockObj = new RequestAnimationFrameMock();
 	const store = getDefaultStore();
 	beforeEach(() => {
@@ -15,29 +14,43 @@ describe('useAnimationSignalUpdates', () => {
 	});
 
 	it('registers for animation callback', () => {
-		renderHook(() => useAnimationSignalUpdates());
+		const orig = mockObj.registrationCount;
+		const unsub = store.sub(animationSignal, () => void 0);
 
-		expect(mockObj.registrationCount).toBe(1);
+		expect(mockObj.registrationCount).toBe(orig + 1);
+
+		unsub();
+	});
+
+	it('registers for animation callback once per store', () => {
+		const orig = mockObj.registrationCount;
+		const unsub = store.sub(animationSignal, () => void 0);
+		const unsub2 = store.sub(animationSignal, () => void 0);
+
+		expect(mockObj.registrationCount).toBe(orig + 1);
+
+		unsub();
+		unsub2();
 	});
 
 	it('registers for animation callback and stores values', () => {
 		const targetTick = 500;
-		renderHook(() => useAnimationSignalUpdates());
+		const unsub = store.sub(animationSignal, () => void 0);
 
 		mockObj.tick(targetTick);
 
-		expect(mockObj.registrationCount).toBe(1);
 		expect(store.get(animationSignal)).toBe(targetTick);
+		unsub();
 	});
 
 	it('reregisters callback and continues to function', () => {
 		const targetTick = 600;
-		renderHook(() => useAnimationSignalUpdates());
+		const unsub = store.sub(animationSignal, () => void 0);
 
 		mockObj.tick(targetTick - 1);
 		mockObj.tick(targetTick);
 
-		expect(mockObj.registrationCount).toBe(1);
 		expect(store.get(animationSignal)).toBe(targetTick);
+		unsub();
 	});
 });

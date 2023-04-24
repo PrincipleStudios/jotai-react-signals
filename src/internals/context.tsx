@@ -1,26 +1,61 @@
-import { useEffect } from 'react';
 import { useStore, atom } from 'jotai';
 
 export type SignalStore = ReturnType<typeof useStore>;
 
-export const animationSignal = atom<number>(0);
-animationSignal.onMount = (setState) => {
-	setState(performance.now());
+const animationRequest = atom(0);
+const animationAbortController = atom(new AbortController());
+const internalAnimationSignal = atom<number>(0);
 
-	const abort = new AbortController();
-	function animate() {
-		if (abort.signal.aborted) return;
-		requestAnimationFrame(animate);
-		setState(performance.now());
+const animationCounters = atom(
+	(get) => get(animationRequest),
+	(get, set, action: 'inc' | 'dec') => {
+		if (action === 'inc') {
+			set(animationRequest, (v) => {
+				if (v === 0) begin();
+				return v + 1;
+			});
+		} else {
+			set(animationRequest, (v) => {
+				if (v === 1) abort();
+				return v - 1;
+			});
+		}
+
+		function abort() {
+			get(animationAbortController).abort();
+		}
+		function begin() {
+			const abort = new AbortController();
+			set(animationAbortController, (prev) => {
+				prev.abort();
+				return abort;
+			});
+
+			requestAnimationFrame(animate);
+			function animate() {
+				if (abort.signal.aborted) return;
+				requestAnimationFrame(animate);
+				set(internalAnimationSignal, performance.now());
+			}
+		}
 	}
-	requestAnimationFrame(animate);
-	return () => abort.abort();
+);
+animationCounters.onMount = (setState) => {
+	setState('inc');
+	return () => setState('dec');
 };
 
-export function useAnimationSignalUpdates() {
-	const signalStore = useStore();
-	useEffect(() => {
-		const unsub = signalStore.sub(animationSignal, () => void 0);
-		return unsub;
-	});
+export const animationSignal = atom((get) => {
+	// intentionally throwing away the underlying one - only used to trigger re-evaluations
+	get(internalAnimationSignal);
+	get(animationCounters);
+
+	const result = performance.now();
+
+	return result;
+});
+
+/** Generally, animations should subscribe for updates. If you do, you do not need this function. For some tests, I wanted to spot-check the updates; this was necessary. */
+export function manuallyUpdateAnimationFrame(store: SignalStore) {
+	store.set(internalAnimationSignal, performance.now());
 }
