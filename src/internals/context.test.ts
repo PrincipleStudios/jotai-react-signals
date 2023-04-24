@@ -5,6 +5,7 @@ import { RequestAnimationFrameMock } from './mocks/RequestAnimationFrameMock';
 
 describe('useAnimationSignalUpdates', () => {
 	const mockObj = new RequestAnimationFrameMock();
+	const store = getDefaultStore();
 	beforeEach(() => {
 		mockObj.spy();
 	});
@@ -21,7 +22,6 @@ describe('useAnimationSignalUpdates', () => {
 
 	it('registers for animation callback and stores values', () => {
 		const targetTick = 500;
-		const store = getDefaultStore();
 		renderHook(() => useAnimationSignalUpdates());
 
 		mockObj.tick(targetTick);
@@ -32,7 +32,6 @@ describe('useAnimationSignalUpdates', () => {
 
 	it('reregisters callback and continues to function', () => {
 		const targetTick = 600;
-		const store = getDefaultStore();
 		renderHook(() => useAnimationSignalUpdates());
 
 		mockObj.tick(targetTick - 1);

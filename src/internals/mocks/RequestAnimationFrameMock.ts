@@ -7,6 +7,7 @@ export class RequestAnimationFrameMock {
 
 	public requestAnimationFrameSpy?: Spy<typeof requestAnimationFrame>;
 	public cancelAnimationFrameSpy?: Spy<typeof cancelAnimationFrame>;
+	public performanceNowSpy?: Spy<(typeof performance)['now']>;
 
 	readonly spy = () => {
 		this.requestAnimationFrameSpy = jest
@@ -15,6 +16,9 @@ export class RequestAnimationFrameMock {
 		this.cancelAnimationFrameSpy = jest
 			.spyOn(window, 'cancelAnimationFrame')
 			.mockImplementation(this.unregister);
+		this.performanceNowSpy = jest
+			.spyOn(performance, 'now')
+			.mockImplementation(this.getTick);
 	};
 
 	readonly restore = () => {
