@@ -35,7 +35,7 @@
     "build": "rollup -c",
     "postbuild": "pwsh ./scripts/post-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
     "test": "jest",
-    "prepare": "husky install .husky",
+    "prepare": "cd .. && husky install jotai-react-signals/.husky",
     "prepack": "npm run lint && npm run build",
     "lint": "npm run typecheck && npm run eslint && npm run prettier",
     "lint:fix": "npm run typecheck && npm run eslint:fix && npm run prettier:fix",
