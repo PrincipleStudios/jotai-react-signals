@@ -1,10 +1,10 @@
-import { type SignalStore, animationSignal } from './context';
+import { type AtomStore, animationSignal } from './animation-atom';
 import { atom, type Atom, type Getter } from 'jotai/vanilla';
 
 export type EasingFunction = (amount: number) => number;
 
 export function tweenedSignal(
-	store: SignalStore,
+	store: AtomStore,
 	original: Atom<number>,
 	easing: EasingFunction,
 	duration = 300

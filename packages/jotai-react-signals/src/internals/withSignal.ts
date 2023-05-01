@@ -8,8 +8,7 @@ import {
 	useEffect,
 	memo,
 } from 'react';
-import { SignalStore } from './context';
-import { isSignal } from './utils';
+import { isAtom } from './utils';
 import {
 	mapStyle,
 	type MappingKeys,
@@ -17,6 +16,8 @@ import {
 	type AnyIntrinsicElementTag,
 	type AnyIntrinsicElement,
 } from './withSignal.mappings';
+
+type AtomStore = ReturnType<typeof useStore>;
 
 function difference<T>(arr1: T[], arr2: T[]) {
 	return arr1.filter((x) => !arr2.includes(x));
@@ -51,12 +52,12 @@ function toPropsObj<
 >(get: Getter, props: WithSignalProps<T, TMapped>): T {
 	return Object.fromEntries(
 		Object.entries(props).map(([key, value]) => {
-			if (isSignal(value)) return [key, get(value as Atom<unknown>)];
+			if (isAtom(value)) return [key, get(value as Atom<unknown>)];
 			if (key === 'style')
 				return [
 					'style',
 					Object.fromEntries(
-						Object.entries(value).map(([k, v]) => [k, isSignal(v) ? get(v) : v])
+						Object.entries(value).map(([k, v]) => [k, isAtom(v) ? get(v) : v])
 					),
 				];
 			return [key, value];
@@ -104,7 +105,7 @@ type Unsubscribe = () => void;
 function setupSetter<TMapped extends MappingKeys>(
 	map: CompleteMapping<TMapped>,
 	elem: Element & ElementCSSInlineStyle,
-	store: SignalStore,
+	store: AtomStore,
 	key: string,
 	value: Atom<unknown>
 ): Unsubscribe {
@@ -122,10 +123,10 @@ function toSignalEntries<
 	TMapped extends MappingKeys
 >(target: WithSignalProps<JSX.IntrinsicElements[T], TMapped>): SignalEntry[] {
 	return Object.entries(target).flatMap(([key, value]): SignalEntry[] => {
-		if (isSignal(value)) return [[key, value]];
+		if (isAtom(value)) return [[key, value]];
 		else if (key === 'style')
 			return Object.entries(value).flatMap(([key, value]): SignalEntry[] => {
-				if (isSignal(value)) return [[`style.${key}`, value]];
+				if (isAtom(value)) return [[`style.${key}`, value]];
 				return [];
 			});
 		else return [];

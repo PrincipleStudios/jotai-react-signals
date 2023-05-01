@@ -4,6 +4,7 @@
 	},
 	"pnpm": {
 		"requiredScripts": [
+			"test",
 			"lint"
 		]
 	},

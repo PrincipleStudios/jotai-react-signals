@@ -1,6 +1,6 @@
 import { useStore, atom } from 'jotai';
 
-export type SignalStore = ReturnType<typeof useStore>;
+export type AtomStore = ReturnType<typeof useStore>;
 
 const animationRequest = atom(0);
 const animationAbortController = atom(new AbortController());
@@ -56,6 +56,6 @@ export const animationSignal = atom((get) => {
 });
 
 /** Generally, animations should subscribe for updates. If you do, you do not need this function. For some tests, I wanted to spot-check the updates; this was necessary. */
-export function manuallyUpdateAnimationFrame(store: SignalStore) {
+export function manuallyUpdateAnimationFrame(store: AtomStore) {
 	store.set(internalAnimationSignal, performance.now());
 }

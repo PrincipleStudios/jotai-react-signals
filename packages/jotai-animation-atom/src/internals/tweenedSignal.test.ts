@@ -1,7 +1,7 @@
 import { atom, createStore } from 'jotai';
 import { RequestAnimationFrameMock } from './mocks/RequestAnimationFrameMock';
 import { tweenedSignal } from './tweenedSignal';
-import { manuallyUpdateAnimationFrame } from './context';
+import { manuallyUpdateAnimationFrame } from './animation-atom';
 
 describe('tweenedSignal', () => {
 	const mockObj = new RequestAnimationFrameMock();

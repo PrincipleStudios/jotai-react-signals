@@ -1,10 +1,5 @@
-export { isSignal } from './internals/utils';
-export { useComputedSignal, useAsAtom } from './internals/hooks';
-export {
-	animationSignal,
-	manuallyUpdateAnimationFrame,
-	type SignalStore,
-} from './internals/context';
+export { isAtom } from './internals/utils';
+export { useComputedAtom, useAsAtom } from './internals/hooks';
 export {
 	type MappingKeys,
 	type CompleteMapping,
@@ -13,4 +8,3 @@ export {
 	mapAttribute,
 } from './internals/withSignal.mappings';
 export { withSignal } from './internals/withSignal';
-export { tweenedSignal, type EasingFunction } from './internals/tweenedSignal';

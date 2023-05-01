@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { type Atom, type PrimitiveAtom, atom, useSetAtom, Getter } from 'jotai';
-import { isSignal } from './utils';
+import { isAtom } from './utils';
 
-export function useComputedSignal<T>(compute: (get: Getter) => T): Atom<T> {
+export function useComputedAtom<T>(compute: (get: Getter) => T): Atom<T> {
 	const result = useRef<{
 		prevInput: typeof compute;
 		base: PrimitiveAtom<{ compute: typeof compute }>;
@@ -39,7 +39,7 @@ export function useAsAtom<T>(valueOrSignal: T | Atom<T>): Atom<T> {
 			base,
 			output: atom((get) => {
 				const maybeResult = get(base);
-				if (isSignal(maybeResult)) return get(maybeResult);
+				if (isAtom(maybeResult)) return get(maybeResult);
 				return maybeResult;
 			}),
 		};

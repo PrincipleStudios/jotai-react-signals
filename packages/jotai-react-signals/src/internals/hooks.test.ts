@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react';
 import { atom, getDefaultStore } from 'jotai';
-import { useAsAtom, useComputedSignal } from './hooks';
+import { useAsAtom, useComputedAtom } from './hooks';
 
-describe('useComputedSignal', () => {
+describe('useComputedAtom', () => {
 	const store = getDefaultStore();
 	const atomA = atom(0);
 	const atomB = atom(0);
@@ -13,11 +13,10 @@ describe('useComputedSignal', () => {
 	});
 
 	function renderComputedSignalHook<T>(
-		...p: Parameters<typeof useComputedSignal<T>>
+		...p: Parameters<typeof useComputedAtom<T>>
 	) {
 		return renderHook(
-			(p: Parameters<typeof useComputedSignal<T>>) =>
-				useComputedSignal<T>(...p),
+			(p: Parameters<typeof useComputedAtom<T>>) => useComputedAtom<T>(...p),
 			{
 				initialProps: p,
 			}

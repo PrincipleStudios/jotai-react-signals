@@ -1,4 +1,4 @@
-import { animationSignal } from './context';
+import { animationSignal } from './animation-atom';
 import { getDefaultStore } from 'jotai';
 import { RequestAnimationFrameMock } from './mocks/RequestAnimationFrameMock';
 

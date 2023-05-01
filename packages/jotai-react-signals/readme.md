@@ -7,7 +7,7 @@ Please note that the current state of this package is a proof-of-concept; while 
 Included in this package:
 
 - Hooks for more easily working with computed Jotai state
-  - `useComputedSignal` - same interface as Jotai's `computed`, but as a React hook with no dependencies
+  - `useComputedAtom` - same interface as Jotai's `computed`, but as a React hook with no dependencies
   - `useAsAtom` - converts a `T | Atom<T>` to an `Atom<T>` as a React hook, so your APIs can be flexible.
 - Utilities for animation
   - `animationSignal` - provides updates per `requestAnimationFrame` (must subscribe to the `animationSignal` or call `manuallyUpdateAnimationFrame`)
@@ -26,7 +26,7 @@ import { useMemo } from 'react';
 import { useStore } from 'jotai';
 import {
 	tweenedSignal,
-	useComputedSignal,
+	useComputedAtom,
 	mapAttribute,
 	type PartialMapping,
 	withSignal,
@@ -66,7 +66,7 @@ const Template: Story<Props> = (args) => {
 		() => tweenedSignal(store, size$, Easing.Quadratic.Out),
 		[store, size$]
 	);
-	const strokeWidth$ = useComputedSignal((get) => get(tweenedSize$) / 15);
+	const strokeWidth$ = useComputedAtom((get) => get(tweenedSize$) / 15);
 	return (
 		<svg width="300px" height="300px">
 			<AnimatedCircle
