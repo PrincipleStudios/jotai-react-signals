@@ -4,15 +4,6 @@ importers:
 
   .:
     devDependencies:
-      husky:
-        specifier: ^8.0.3
-        version: 8.0.3
-      lint-staged:
-        specifier: ^13.1.2
-        version: 13.1.2
-
-  packages/jotai-react-signals:
-    devDependencies:
       '@babel/plugin-transform-react-jsx':
         specifier: ^7.21.0
         version: 7.21.0(@babel/core@7.21.5)
@@ -79,6 +70,9 @@ importers:
       eslint-plugin-react-hooks:
         specifier: ^4.6.0
         version: 4.6.0(eslint@8.35.0)
+      husky:
+        specifier: ^8.0.3
+        version: 8.0.3
       jest:
         specifier: ^29.5.0
         version: 29.5.0
@@ -88,6 +82,9 @@ importers:
       jotai:
         specifier: ^2.0.3
         version: 2.0.3(react@18.2.0)
+      lint-staged:
+        specifier: ^13.1.2
+        version: 13.1.2
       prettier:
         specifier: ^2.8.4
         version: 2.8.4
@@ -109,6 +106,21 @@ importers:
       typescript:
         specifier: ^5.0.2
         version: 5.0.2
+
+  packages/jotai-react-signals:
+    dependencies:
+      jotai:
+        specifier: '>=2.0.0'
+        version: 2.0.3(react@18.2.0)
+      react:
+        specifier: '>=17.0.0'
+        version: 18.2.0
+    devDependencies:
+      '@mdekrey/jotai-tooling-base':
+        specifier: '*'
+        version: link:../tooling-base
+
+  packages/tooling-base: {}
 
 packages:
 
@@ -4436,7 +4448,6 @@ packages:
         optional: true
     dependencies:
       react: 18.2.0
-    dev: true
 
   /joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
@@ -4449,7 +4460,6 @@ packages:
 
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
-    dev: true
 
   /js-yaml@3.14.1:
     resolution: {integrity: sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==}
@@ -4662,7 +4672,6 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
-    dev: true
 
   /lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
@@ -5144,7 +5153,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
-    dev: true
 
   /regenerate-unicode-properties@10.1.0:
     resolution: {integrity: sha512-d1VudCLoIGitcU/hEg2QqvyGZQmdC0Lf8BqdOMXGFSvJP4bNV1+XqbPQeHHLD51Jh4QJJ225dlIFvY4Ly6MXmQ==}
