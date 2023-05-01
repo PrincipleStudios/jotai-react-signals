@@ -1,0 +1,14 @@
+{
+	"scripts": {
+		"prepare": "husky install .husky"
+	},
+	"pnpm": {
+		"requiredScripts": [
+			"lint"
+		]
+	},
+	"devDependencies": {
+		"husky": "^8.0.3",
+		"lint-staged": "^13.1.2"
+	}
+}
