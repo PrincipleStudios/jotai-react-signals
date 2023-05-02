@@ -1,6 +1,6 @@
 {
 	"name": "@mdekrey/jotai-animation-atom",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"description": "👻 Jotai animation utilities",
 	"main": "dist/index.js",
 	"module": "dist/mjs/index.js",

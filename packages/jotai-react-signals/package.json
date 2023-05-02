@@ -1,6 +1,6 @@
 {
   "name": "@mdekrey/jotai-react-signals",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "👻 React signals using Jotai",
   "main": "dist/index.js",
   "module": "dist/mjs/index.js",
