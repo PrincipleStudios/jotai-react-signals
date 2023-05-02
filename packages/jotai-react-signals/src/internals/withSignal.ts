@@ -11,7 +11,7 @@ import {
 import { isAtom } from './utils';
 import {
 	mapStyle,
-	type MappingKeys,
+	type Mapping,
 	type CompleteMapping,
 	type AnyIntrinsicElementTag,
 	type AnyIntrinsicElement,
@@ -24,8 +24,6 @@ function difference<T>(arr1: T[], arr2: T[]) {
 	return arr1.filter((x) => !arr2.includes(x));
 }
 
-type MaybeSignal<T> = T | Atom<T>;
-
 type CSSPropertiesWithSignal = {
 	[K in keyof CSSProperties | `--${string}`]?: K extends `--${string}`
 		? string | number | Atom<string | null>
@@ -34,31 +32,38 @@ type CSSPropertiesWithSignal = {
 		: never;
 };
 
+type MergeMappingProp<TRaw, TAtom> =
+	| (TRaw extends never ? never : TRaw)
+	| Exclude<Atom<TAtom>, Atom<never>>;
+
 type WithSignalProps<
 	T extends AnyIntrinsicElement,
-	TMapped extends MappingKeys
+	TMapping extends Mapping
 > = {
 	[K in keyof T]: K extends 'style'
 		? T[K] extends CSSProperties | undefined
 			? CSSPropertiesWithSignal | undefined
-			: T[K]
-		: K extends TMapped
-		? MaybeSignal<T[K]>
-		: T[K];
+			: MergeMappingProp<T[K], K extends keyof TMapping ? TMapping[K] : never>
+		: MergeMappingProp<T[K], K extends keyof TMapping ? TMapping[K] : never>;
+} & {
+	[K in Exclude<keyof TMapping, keyof T>]?: Atom<TMapping[K]>;
 };
 
 function toPropsObj<
 	T extends { style?: CSSProperties },
-	TMapped extends MappingKeys
->(get: Getter, props: WithSignalProps<T, TMapped>): T {
+	TMapping extends Mapping
+>(get: Getter, props: WithSignalProps<T, TMapping>): T {
 	return Object.fromEntries(
 		Object.entries(props).map(([key, value]) => {
 			if (isAtom(value)) return [key, get(value as Atom<unknown>)];
-			if (key === 'style')
+			if (key === 'style' && value)
 				return [
 					'style',
 					Object.fromEntries(
-						Object.entries(value).map(([k, v]) => [k, isAtom(v) ? get(v) : v])
+						Object.entries(value as CSSProperties).map(([k, v]) => [
+							k,
+							isAtom(v) ? get(v) : v,
+						])
 					),
 				];
 			return [key, value];
@@ -97,16 +102,16 @@ function useCombinedRefs<T>(...refs: React.ForwardedRef<T>[]) {
 	return targetRef;
 }
 
-function toUpdater<TMapped extends MappingKeys>(
+function toUpdater<TMapping extends Mapping>(
 	elem: Element & ElementCSSInlineStyle,
 	key: string,
-	map: CompleteMapping<TMapped>
+	map: CompleteMapping<TMapping>
 ): (value: unknown) => void {
 	if (key.startsWith('style.')) {
 		const stylePart = key.split('.')[1];
 		return mapStyle(stylePart)(elem);
 	} else if (key in map) {
-		return map[key as keyof typeof map](elem);
+		return map[key as keyof typeof map](elem) as (value: unknown) => void;
 	}
 	console.warn(`unknown key, unable to treat as signal:`, elem, key);
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -115,8 +120,8 @@ function toUpdater<TMapped extends MappingKeys>(
 
 type Unsubscribe = () => void;
 
-function setupSetter<TMapped extends MappingKeys>(
-	map: CompleteMapping<TMapped>,
+function setupSetter<TMapping extends Mapping>(
+	map: CompleteMapping<TMapping>,
 	elem: Element & ElementCSSInlineStyle,
 	store: AtomStore,
 	key: string,
@@ -133,11 +138,11 @@ function setupSetter<TMapped extends MappingKeys>(
 type SignalEntry = [key: string, value: Atom<unknown>];
 function toSignalEntries<
 	T extends AnyIntrinsicElementTag,
-	TMapped extends MappingKeys
->(target: WithSignalProps<JSX.IntrinsicElements[T], TMapped>): SignalEntry[] {
+	TMapping extends Mapping
+>(target: WithSignalProps<JSX.IntrinsicElements[T], TMapping>): SignalEntry[] {
 	return Object.entries(target).flatMap(([key, value]): SignalEntry[] => {
 		if (isAtom(value)) return [[key, value]];
-		else if (key === 'style')
+		else if (key === 'style' && value)
 			return Object.entries(value).flatMap(([key, value]): SignalEntry[] => {
 				if (isAtom(value)) return [[`style.${key}`, value]];
 				return [];
@@ -146,21 +151,43 @@ function toSignalEntries<
 	});
 }
 
-export function withSignal<
-	T extends AnyIntrinsicElementTag,
-	TMapped extends MappingKeys
->(
-	elem: T,
-	map: CompleteMapping<TMapped>
+export function withSignal<T extends AnyIntrinsicElementTag>(
+	elem: T
 ): React.MemoExoticComponent<
 	React.ForwardRefExoticComponent<
-		React.PropsWithoutRef<WithSignalProps<JSX.IntrinsicElements[T], TMapped>> &
+		React.PropsWithoutRef<
+			WithSignalProps<JSX.IntrinsicElements[T], Record<never, never>>
+		> &
+			React.RefAttributes<RefType<T>>
+	>
+>;
+export function withSignal<
+	T extends AnyIntrinsicElementTag,
+	TMapping extends Mapping
+>(
+	elem: T,
+	map: CompleteMapping<TMapping>
+): React.MemoExoticComponent<
+	React.ForwardRefExoticComponent<
+		React.PropsWithoutRef<WithSignalProps<JSX.IntrinsicElements[T], TMapping>> &
+			React.RefAttributes<RefType<T>>
+	>
+>;
+export function withSignal<
+	T extends AnyIntrinsicElementTag,
+	TMapping extends Mapping
+>(
+	elem: T,
+	map: CompleteMapping<TMapping> = {} as CompleteMapping<TMapping>
+): React.MemoExoticComponent<
+	React.ForwardRefExoticComponent<
+		React.PropsWithoutRef<WithSignalProps<JSX.IntrinsicElements[T], TMapping>> &
 			React.RefAttributes<RefType<T>>
 	>
 > {
 	const result = memo(
 		forwardRef(function Signalled(
-			props: WithSignalProps<JSX.IntrinsicElements[T], TMapped>,
+			props: WithSignalProps<JSX.IntrinsicElements[T], TMapping>,
 			ref: React.ForwardedRef<RefType<T>>
 		) {
 			const subscriptionRef = useRef<
@@ -179,7 +206,7 @@ export function withSignal<
 			useEffect(() => {
 				const elem = finalRef.current;
 				if (!elem) return;
-				const signalEntries = toSignalEntries<T, TMapped>(props);
+				const signalEntries = toSignalEntries<T, TMapping>(props);
 				// unsubscribe from old signals
 				difference(
 					Object.keys(subscriptionRef.current),

@@ -5,7 +5,7 @@ import { mapAttribute, mapProperty } from './withSignal.mappings';
 
 describe('withSignal', () => {
 	describe('without mappings', () => {
-		const BasicDiv = withSignal('div', {});
+		const BasicDiv = withSignal('div');
 		const store = getDefaultStore();
 		const atomA = atom('100px');
 
@@ -89,10 +89,13 @@ describe('withSignal', () => {
 			tabIndex: mapAttribute('tabindex'),
 		});
 		const store = getDefaultStore();
-		const atomRadius = atom(15);
+		const atomTabIndex = atom(15);
+		const atomTabIndexString = atom((get): string | undefined =>
+			get(atomTabIndex).toFixed(0)
+		);
 
 		beforeEach(() => {
-			store.set(atomRadius, 15);
+			store.set(atomTabIndex, 15);
 		});
 
 		it('assigns props normally', () => {
@@ -103,24 +106,66 @@ describe('withSignal', () => {
 		});
 
 		it('initializes mapped property with value from signal', () => {
-			const { container } = render(<BasicInput tabIndex={atomRadius} />);
+			const { container } = render(
+				<BasicInput tabIndex={atomTabIndexString} />
+			);
 			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
 
 			expect(el.getAttribute('tabindex')).toBe('15');
 		});
 
 		it('updates mapped property with value from signal', () => {
-			const { container } = render(<BasicInput tabIndex={atomRadius} />);
+			const { container } = render(
+				<BasicInput tabIndex={atomTabIndexString} />
+			);
 			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
 
-			store.set(atomRadius, 30);
+			store.set(atomTabIndex, 30);
+
+			expect(el.getAttribute('tabindex')).toBe('30');
+		});
+	});
+
+	describe('with tabIndex custom mapping on an input to allow numbers', () => {
+		const BasicInput = withSignal('input', {
+			tabIndex: (elem) => (value: number | undefined) =>
+				value === undefined
+					? elem.removeAttribute('tabIndex')
+					: elem.setAttribute('tabindex', value.toFixed(0)),
+		});
+		const store = getDefaultStore();
+		const atomTabIndex = atom(15);
+
+		beforeEach(() => {
+			store.set(atomTabIndex, 15);
+		});
+
+		it('assigns props normally', () => {
+			const { container } = render(<BasicInput tabIndex={15} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			expect(el.getAttribute('tabindex')).toBe('15');
+		});
+
+		it('initializes mapped property with value from signal', () => {
+			const { container } = render(<BasicInput tabIndex={atomTabIndex} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			expect(el.getAttribute('tabindex')).toBe('15');
+		});
+
+		it('updates mapped property with value from signal', () => {
+			const { container } = render(<BasicInput tabIndex={atomTabIndex} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			store.set(atomTabIndex, 30);
 
 			expect(el.getAttribute('tabindex')).toBe('30');
 		});
 	});
 
 	describe('with a ref', () => {
-		const BasicInput = withSignal('input', {});
+		const BasicInput = withSignal('input');
 
 		it('allows access to the underlying element', () => {
 			const callback = jest.fn();

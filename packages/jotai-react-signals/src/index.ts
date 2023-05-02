@@ -1,7 +1,7 @@
 export { isAtom } from './internals/utils';
 export { useComputedAtom, useAsAtom } from './internals/hooks';
 export {
-	type MappingKeys,
+	type Mapping,
 	type CompleteMapping,
 	type PartialMapping,
 	mapProperty,
