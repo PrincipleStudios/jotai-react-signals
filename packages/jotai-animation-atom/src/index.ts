@@ -1,5 +1,7 @@
 export {
 	animationSignal,
+	getAnimationSignal,
+	getInstantaneousAnimationSignal,
 	manuallyUpdateAnimationFrame,
 	type AtomStore,
 } from './internals/animation-atom';

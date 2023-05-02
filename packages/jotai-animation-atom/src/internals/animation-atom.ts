@@ -1,4 +1,4 @@
-import { useStore, atom } from 'jotai';
+import { useStore, atom, Getter } from 'jotai';
 
 export type AtomStore = ReturnType<typeof useStore>;
 
@@ -35,7 +35,7 @@ const animationCounters = atom(
 			function animate() {
 				if (abort.signal.aborted) return;
 				requestAnimationFrame(animate);
-				set(internalAnimationSignal, performance.now());
+				set(internalAnimationSignal, getInstantaneousAnimationSignal());
 			}
 		}
 	}
@@ -45,17 +45,24 @@ animationCounters.onMount = (setState) => {
 	return () => setState('dec');
 };
 
-export const animationSignal = atom((get) => {
+export function getInstantaneousAnimationSignal() {
+	return performance.now();
+}
+
+export function getAnimationSignal(get: Getter) {
 	// intentionally throwing away the underlying one - only used to trigger re-evaluations
 	get(internalAnimationSignal);
 	get(animationCounters);
 
-	const result = performance.now();
+	const result = getInstantaneousAnimationSignal();
 
 	return result;
-});
+}
+
+/** @deprecated Use `getAnimationSignal`. */
+export const animationSignal = atom(getAnimationSignal);
 
 /** Generally, animations should subscribe for updates. If you do, you do not need this function. For some tests, I wanted to spot-check the updates; this was necessary. */
 export function manuallyUpdateAnimationFrame(store: AtomStore) {
-	store.set(internalAnimationSignal, performance.now());
+	store.set(internalAnimationSignal, getInstantaneousAnimationSignal());
 }

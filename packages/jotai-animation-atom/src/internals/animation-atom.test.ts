@@ -1,8 +1,9 @@
-import { animationSignal } from './animation-atom';
-import { getDefaultStore } from 'jotai';
+import { atom, getDefaultStore } from 'jotai';
 import { RequestAnimationFrameMock } from './mocks/RequestAnimationFrameMock';
+import { getAnimationSignal } from './animation-atom';
 
-describe('animationSignal', () => {
+describe('getAnimationSignal', () => {
+	const animationSignal = atom(getAnimationSignal);
 	const mockObj = new RequestAnimationFrameMock();
 	const store = getDefaultStore();
 	beforeEach(() => {

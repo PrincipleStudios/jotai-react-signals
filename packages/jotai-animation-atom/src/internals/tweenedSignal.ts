@@ -1,13 +1,19 @@
-import { type AtomStore, animationSignal } from './animation-atom';
+import { type AtomStore, getAnimationSignal } from './animation-atom';
 import { atom, type Atom, type Getter } from 'jotai/vanilla';
 
 export type EasingFunction = (amount: number) => number;
+
+export type TweenEvents = {
+	onComplete: (get: Getter, setInternal: (newValue: number) => void) => void;
+	onStart: (get: Getter, startValue: number, endValue: number) => void;
+};
 
 export function tweenedSignal(
 	store: AtomStore,
 	original: Atom<number>,
 	easing: EasingFunction,
-	duration = 300
+	duration = 300,
+	{ onComplete, onStart }: Partial<TweenEvents> = {}
 ) {
 	const initial = store.get(original);
 	const easingFunctionOrConst = atom<ReturnType<typeof toEased> | number>(
@@ -38,11 +44,11 @@ export function tweenedSignal(
 		eased: (get: Getter) => number;
 		endValue: number;
 	} {
-		const startTime = get(animationSignal);
+		const startTime = getAnimationSignal(get);
 		return {
 			endValue,
 			eased(get) {
-				const timing = get(animationSignal);
+				const timing = getAnimationSignal(get);
 				const factor = Math.max(
 					0,
 					Math.min((timing - startTime) / duration, 1)
