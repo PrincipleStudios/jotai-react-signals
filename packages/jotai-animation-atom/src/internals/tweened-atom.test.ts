@@ -1,12 +1,12 @@
 import { atom, createStore } from 'jotai';
 import { RequestAnimationFrameMock } from './mocks/RequestAnimationFrameMock';
-import { tweenedSignal } from './tweenedSignal';
+import { tweenedAtom } from './tweened-atom';
 import {
 	initializeForAnimations,
 	manuallyUpdateAnimationFrame,
 } from './animation-atom';
 
-describe('tweenedSignal', () => {
+describe('tweenedAtom', () => {
 	const mockObj = new RequestAnimationFrameMock();
 	const atomA = atom(0);
 
@@ -24,14 +24,14 @@ describe('tweenedSignal', () => {
 
 	it('cannot animate pre-subscription', () => {
 		const store = createStore();
-		const target = tweenedSignal(atomA, (n) => n, 300);
+		const target = tweenedAtom(atomA, (n) => n, 300);
 
 		expect(() => store.get(target)).toThrowError();
 	});
 
 	it('can animate after manually initialized', () => {
 		const store = createStore();
-		const target = tweenedSignal(atomA, (n) => n, 300);
+		const target = tweenedAtom(atomA, (n) => n, 300);
 		initializeForAnimations(store);
 
 		expect(store.get(target)).toBe(0);
@@ -55,7 +55,7 @@ describe('tweenedSignal', () => {
 
 	it('defers a numeric signal based on an easing function', () => {
 		const store = createStore();
-		const target = tweenedSignal(atomA, (n) => n, 300);
+		const target = tweenedAtom(atomA, (n) => n, 300);
 		const unsub = store.sub(target, () => void 0);
 
 		try {
@@ -79,7 +79,7 @@ describe('tweenedSignal', () => {
 
 	it('triggers subscription', () => {
 		const store = createStore();
-		const target = tweenedSignal(atomA, (n) => n, 300);
+		const target = tweenedAtom(atomA, (n) => n, 300);
 
 		const values: number[] = [];
 		const spy = jest.fn(() => values.push(store.get(target)));
@@ -105,7 +105,7 @@ describe('tweenedSignal', () => {
 
 	it('triggers subscription with second animation', () => {
 		const store = createStore();
-		const target = tweenedSignal(atomA, (n) => n, 300);
+		const target = tweenedAtom(atomA, (n) => n, 300);
 
 		const values: number[] = [];
 		const spy = jest.fn(() => values.push(store.get(target)));
@@ -140,7 +140,7 @@ describe('tweenedSignal', () => {
 
 	it('accepts quadratic ease-in easing functions', () => {
 		const store = createStore();
-		const target = tweenedSignal(atomA, (n) => n * n, 300);
+		const target = tweenedAtom(atomA, (n) => n * n, 300);
 
 		const values: number[] = [];
 		const spy = jest.fn(() => values.push(store.get(target)));
@@ -165,7 +165,7 @@ describe('tweenedSignal', () => {
 
 	it('accepts alternate durations', () => {
 		const store = createStore();
-		const target = tweenedSignal(atomA, (n) => n, 500);
+		const target = tweenedAtom(atomA, (n) => n, 500);
 
 		const values: number[] = [];
 		const spy = jest.fn(() => values.push(store.get(target)));
@@ -193,7 +193,7 @@ describe('tweenedSignal', () => {
 	it('notifies when animation starts', () => {
 		const store = createStore();
 		const onStart = jest.fn(() => void 0);
-		const target = tweenedSignal(atomA, (n) => n, 300, {
+		const target = tweenedAtom(atomA, (n) => n, 300, {
 			onStart,
 		});
 
@@ -215,7 +215,7 @@ describe('tweenedSignal', () => {
 	it('notifies when animation ends', () => {
 		const store = createStore();
 		const onComplete = jest.fn(() => void 0);
-		const target = tweenedSignal(atomA, (n) => n, 300, {
+		const target = tweenedAtom(atomA, (n) => n, 300, {
 			onComplete,
 		});
 

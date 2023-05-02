@@ -14,7 +14,7 @@ type Tweening = {
 	eased: (get: Getter) => number;
 };
 
-export function tweenedSignal(
+export function tweenedAtom(
 	original: Atom<number>,
 	easing: EasingFunction,
 	duration = 300,
