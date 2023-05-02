@@ -68,6 +68,41 @@ describe('tweenedSignal', () => {
 		}
 	});
 
+	it('triggers subscription with second animation', () => {
+		const store = createStore();
+		const target = tweenedSignal(store, atomA, (n) => n, 300);
+
+		const values: number[] = [];
+		const spy = jest.fn(() => values.push(store.get(target)));
+		// subscription does not fire when first registered
+		const unsub = store.sub(target, spy);
+
+		try {
+			expect(store.get(target)).toBe(0);
+			store.set(atomA, 3);
+
+			// start moving per tick
+			mockObj.tick(100);
+			mockObj.tick(200);
+			mockObj.tick(300);
+			mockObj.tick(400);
+			mockObj.tick(500);
+			mockObj.tick(1000);
+
+			store.set(atomA, 6);
+			mockObj.tick(1100);
+			mockObj.tick(1200);
+			mockObj.tick(1300);
+			mockObj.tick(1400);
+
+			expect(spy.mock.calls.length).toBe(6);
+			expect(values).toEqual([1, 2, 3, 4, 5, 6]);
+			expect(store.get(target)).toBe(6);
+		} finally {
+			unsub();
+		}
+	});
+
 	it('accepts quadratic ease-in easing functions', () => {
 		const store = createStore();
 		const target = tweenedSignal(store, atomA, (n) => n * n, 300);
