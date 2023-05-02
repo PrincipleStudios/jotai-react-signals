@@ -6,7 +6,4 @@ export {
 	initializeForAnimations,
 	type AtomStore,
 } from './internals/animation-atom';
-export {
-	tweenedAtom as tweenedSignal,
-	type EasingFunction,
-} from './internals/tweened-atom';
+export { tweenedAtom, type EasingFunction } from './internals/tweened-atom';

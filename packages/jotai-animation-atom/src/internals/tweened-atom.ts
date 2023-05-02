@@ -27,9 +27,9 @@ export function tweenedAtom(
 			const funcOrConst = get(easingFunctionOrConst);
 			const target = get(original);
 			if (!set) {
-				throw new Error(
-					'Cannot animate if nothing has ever subscribed to an animation in this store.'
-				);
+				// Warning: cannot animate if not subscribed
+				// Not throwing here, though, because SSG and SSR would require side-effects in some cases to make this work.
+				return target;
 			}
 			if (typeof funcOrConst === 'undefined') {
 				set(easingFunctionOrConst, target);

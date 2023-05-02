@@ -26,7 +26,9 @@ describe('tweenedAtom', () => {
 		const store = createStore();
 		const target = tweenedAtom(atomA, (n) => n, 300);
 
-		expect(() => store.get(target)).toThrowError();
+		expect(store.get(target)).toBe(0);
+		store.set(atomA, 3);
+		expect(store.get(target)).toBe(3);
 	});
 
 	it('can animate after manually initialized', () => {
