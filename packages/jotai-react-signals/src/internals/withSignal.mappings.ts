@@ -10,11 +10,14 @@ export type RefType<TTag extends AnyIntrinsicElementTag> =
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Mapping = Record<string, any>;
 
-export type CompleteMapping<TMapping extends Mapping> = {
-	[K in keyof TMapping]: (elem: Element) => (value: TMapping[K]) => void;
+export type CompleteMapping<TElem extends Element, TMapping extends Mapping> = {
+	[K in keyof TMapping]: (elem: TElem) => (value: TMapping[K]) => void;
 };
 
-export type PartialMapping = Partial<CompleteMapping<Mapping>>;
+export type PartialMapping<
+	TElem extends Element = Element,
+	TMapping extends Mapping = Mapping
+> = Partial<CompleteMapping<TElem, TMapping>>;
 
 export function mapProperty<TElem extends Element, TProp extends keyof TElem>(
 	propName: TProp

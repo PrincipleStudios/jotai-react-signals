@@ -164,6 +164,41 @@ describe('withSignal', () => {
 		});
 	});
 
+	describe('with tabIndex via property on an anchor tag', () => {
+		const AnimatedA = withSignal('a', {
+			tabIndex: mapProperty('tabIndex'),
+		});
+		const store = getDefaultStore();
+		const atomTabIndex = atom(15);
+
+		beforeEach(() => {
+			store.set(atomTabIndex, 15);
+		});
+
+		it('assigns props normally', () => {
+			const { container } = render(<AnimatedA tabIndex={15} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			expect(el.getAttribute('tabindex')).toBe('15');
+		});
+
+		it('initializes mapped property with value from signal', () => {
+			const { container } = render(<AnimatedA tabIndex={atomTabIndex} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			expect(el.getAttribute('tabindex')).toBe('15');
+		});
+
+		it('updates mapped property with value from signal', () => {
+			const { container } = render(<AnimatedA tabIndex={atomTabIndex} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			store.set(atomTabIndex, 30);
+
+			expect(el.getAttribute('tabindex')).toBe('30');
+		});
+	});
+
 	describe('with a ref', () => {
 		const BasicInput = withSignal('input');
 

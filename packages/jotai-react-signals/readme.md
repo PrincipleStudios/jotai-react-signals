@@ -72,8 +72,8 @@ const Template: Story<Props> = (args) => {
 			<AnimatedCircle
 				cx={150}
 				cy={150}
-				r={tweenedSize$}
-				strokeWidth={strokeWidth$}
+				r={atom((get) => get(tweenedSize$).toFixed(3))}
+				strokeWidth={atom((get) => get(strokeWidth$).toFixed(3))}
 				stroke="red"
 				fill="none"
 			/>

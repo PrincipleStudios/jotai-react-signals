@@ -102,14 +102,14 @@ function useCombinedRefs<T>(...refs: React.ForwardedRef<T>[]) {
 	return targetRef;
 }
 
-function toUpdater<TMapping extends Mapping>(
-	elem: Element & ElementCSSInlineStyle,
+function toUpdater<TElement extends Element, TMapping extends Mapping>(
+	elem: TElement,
 	key: string,
-	map: CompleteMapping<TMapping>
+	map: CompleteMapping<TElement, TMapping>
 ): (value: unknown) => void {
 	if (key.startsWith('style.')) {
 		const stylePart = key.split('.')[1];
-		return mapStyle(stylePart)(elem);
+		return mapStyle(stylePart)(elem as unknown as ElementCSSInlineStyle);
 	} else if (key in map) {
 		return map[key as keyof typeof map](elem) as (value: unknown) => void;
 	}
@@ -120,9 +120,9 @@ function toUpdater<TMapping extends Mapping>(
 
 type Unsubscribe = () => void;
 
-function setupSetter<TMapping extends Mapping>(
-	map: CompleteMapping<TMapping>,
-	elem: Element & ElementCSSInlineStyle,
+function setupSetter<TElement extends Element, TMapping extends Mapping>(
+	map: CompleteMapping<TElement, TMapping>,
+	elem: TElement,
 	store: AtomStore,
 	key: string,
 	value: Atom<unknown>
@@ -166,7 +166,7 @@ export function withSignal<
 	TMapping extends Mapping
 >(
 	elem: T,
-	map: CompleteMapping<TMapping>
+	map: CompleteMapping<RefType<T> & Element, TMapping>
 ): React.MemoExoticComponent<
 	React.ForwardRefExoticComponent<
 		React.PropsWithoutRef<WithSignalProps<JSX.IntrinsicElements[T], TMapping>> &
@@ -178,7 +178,10 @@ export function withSignal<
 	TMapping extends Mapping
 >(
 	elem: T,
-	map: CompleteMapping<TMapping> = {} as CompleteMapping<TMapping>
+	map: CompleteMapping<RefType<T> & Element, TMapping> = {} as CompleteMapping<
+		RefType<T> & Element,
+		TMapping
+	>
 ): React.MemoExoticComponent<
 	React.ForwardRefExoticComponent<
 		React.PropsWithoutRef<WithSignalProps<JSX.IntrinsicElements[T], TMapping>> &
