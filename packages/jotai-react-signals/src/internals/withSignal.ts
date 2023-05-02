@@ -15,6 +15,7 @@ import {
 	type CompleteMapping,
 	type AnyIntrinsicElementTag,
 	type AnyIntrinsicElement,
+	type RefType,
 } from './withSignal.mappings';
 
 type AtomStore = ReturnType<typeof useStore>;
@@ -27,9 +28,9 @@ type MaybeSignal<T> = T | Atom<T>;
 
 type CSSPropertiesWithSignal = {
 	[K in keyof CSSProperties | `--${string}`]?: K extends `--${string}`
-		? string | number | Atom<string>
+		? string | number | Atom<string | null>
 		: K extends keyof CSSProperties
-		? CSSProperties[K] | Atom<string>
+		? CSSProperties[K] | Atom<string | null>
 		: never;
 };
 
@@ -79,6 +80,18 @@ function useCombinedRefs<T>(...refs: React.ForwardedRef<T>[]) {
 			}
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
+
+		return () => {
+			refs.forEach((ref) => {
+				if (!ref) return;
+
+				if (typeof ref === 'function') {
+					ref(null);
+				} else {
+					ref.current = null;
+				}
+			});
+		};
 	}, refs);
 
 	return targetRef;
@@ -136,15 +149,19 @@ function toSignalEntries<
 export function withSignal<
 	T extends AnyIntrinsicElementTag,
 	TMapped extends MappingKeys
->(elem: T, map: CompleteMapping<TMapped>) {
+>(
+	elem: T,
+	map: CompleteMapping<TMapped>
+): React.MemoExoticComponent<
+	React.ForwardRefExoticComponent<
+		React.PropsWithoutRef<WithSignalProps<JSX.IntrinsicElements[T], TMapped>> &
+			React.RefAttributes<RefType<T>>
+	>
+> {
 	const result = memo(
 		forwardRef(function Signalled(
 			props: WithSignalProps<JSX.IntrinsicElements[T], TMapped>,
-			ref: React.ForwardedRef<
-				JSX.IntrinsicElements[T] extends React.ClassAttributes<infer U>
-					? U
-					: never
-			>
+			ref: React.ForwardedRef<RefType<T>>
 		) {
 			const subscriptionRef = useRef<
 				Record<string, [Atom<unknown>, Unsubscribe]>

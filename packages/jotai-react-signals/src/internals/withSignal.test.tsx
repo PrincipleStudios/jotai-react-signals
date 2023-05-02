@@ -118,4 +118,24 @@ describe('withSignal', () => {
 			expect(el.getAttribute('tabindex')).toBe('30');
 		});
 	});
+
+	describe('with a ref', () => {
+		const BasicInput = withSignal('input', {});
+
+		it('allows access to the underlying element', () => {
+			const callback = jest.fn();
+			const { container } = render(<BasicInput ref={callback} />);
+
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+			expect(callback).toBeCalledWith(el);
+		});
+
+		it('unmounts correctly', () => {
+			const callback = jest.fn();
+			const { unmount } = render(<BasicInput ref={callback} />);
+			unmount();
+
+			expect(callback).toBeCalledWith(null);
+		});
+	});
 });
