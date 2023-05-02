@@ -8,6 +8,12 @@ export type TweenEvents = {
 	onStart: (get: Getter, startValue: number, endValue: number) => void;
 };
 
+type Tweening = {
+	endValue?: number;
+	isComplete: (get: Getter) => boolean;
+	eased: (get: Getter) => number;
+};
+
 export function tweenedSignal(
 	store: AtomStore,
 	original: Atom<number>,
@@ -16,9 +22,7 @@ export function tweenedSignal(
 	{ onComplete, onStart }: Partial<TweenEvents> = {}
 ) {
 	const initial = store.get(original);
-	const easingFunctionOrConst = atom<ReturnType<typeof toEased> | number>(
-		initial
-	);
+	const easingFunctionOrConst = atom<Tweening | number>(initial);
 	const result = atom((get) => {
 		const funcOrConst = get(easingFunctionOrConst);
 		const target = get(original);
@@ -28,6 +32,10 @@ export function tweenedSignal(
 		} else {
 			const result = funcOrConst.eased(get);
 			if (target !== funcOrConst.endValue) start(get, result, target);
+			else if (funcOrConst.isComplete(get)) {
+				store.set(easingFunctionOrConst, result);
+				onComplete?.(get, (v) => store.set(easingFunctionOrConst, v));
+			}
 			return result;
 		}
 	});
@@ -41,13 +49,14 @@ export function tweenedSignal(
 		get: Getter,
 		startValue: number,
 		endValue: number
-	): {
-		eased: (get: Getter) => number;
-		endValue: number;
-	} {
+	): Tweening {
 		const startTime = getAnimationSignal(get);
 		return {
 			endValue,
+			isComplete(get) {
+				const timing = getAnimationSignal(get);
+				return timing - startTime >= duration;
+			},
 			eased(get) {
 				const timing = getAnimationSignal(get);
 				const factor = Math.max(
@@ -55,8 +64,6 @@ export function tweenedSignal(
 					Math.min((timing - startTime) / duration, 1)
 				);
 				if (factor >= 1) {
-					store.set(easingFunctionOrConst, endValue);
-					onComplete?.(get, (v) => store.set(easingFunctionOrConst, v));
 					return endValue;
 				}
 				return startValue + (endValue - startValue) * easing(factor);
