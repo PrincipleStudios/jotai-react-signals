@@ -1,14 +1,23 @@
-import { useStore, atom, Getter } from 'jotai';
+import {
+	type getDefaultStore,
+	atom,
+	type Getter,
+	type Setter,
+} from 'jotai/vanilla';
 
-export type AtomStore = ReturnType<typeof useStore>;
+export type AtomStore = ReturnType<typeof getDefaultStore>;
 
 const animationRequest = atom(0);
 const animationAbortController = atom(new AbortController());
 const internalAnimationSignal = atom<number>(0);
 
+export const setterContainer = atom<Setter | undefined>(undefined);
+
 const animationCounters = atom(
 	(get) => get(animationRequest),
 	(get, set, action: 'inc' | 'dec') => {
+		set(setterContainer, (s: Setter | undefined) => s ?? set);
+
 		if (action === 'inc') {
 			set(animationRequest, (v) => {
 				if (v === 0) begin();
@@ -57,6 +66,10 @@ export function getAnimationSignal(get: Getter) {
 	const result = getInstantaneousAnimationSignal();
 
 	return result;
+}
+
+export function initializeForAnimations(store: AtomStore) {
+	store.set(setterContainer, (s: Setter | undefined) => s ?? store.set);
 }
 
 /** @deprecated Use `getAnimationSignal`. */

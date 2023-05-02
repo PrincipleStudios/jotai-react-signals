@@ -1,5 +1,5 @@
-import { type AtomStore, getAnimationSignal } from './animation-atom';
-import { atom, type Atom, type Getter } from 'jotai/vanilla';
+import { getAnimationSignal, setterContainer } from './animation-atom';
+import { atom, type Setter, type Atom, type Getter } from 'jotai/vanilla';
 
 export type EasingFunction = (amount: number) => number;
 
@@ -15,33 +15,51 @@ type Tweening = {
 };
 
 export function tweenedSignal(
-	store: AtomStore,
 	original: Atom<number>,
 	easing: EasingFunction,
 	duration = 300,
 	{ onComplete, onStart }: Partial<TweenEvents> = {}
-) {
-	const initial = store.get(original);
-	const easingFunctionOrConst = atom<Tweening | number>(initial);
-	const result = atom((get) => {
-		const funcOrConst = get(easingFunctionOrConst);
-		const target = get(original);
-		if (typeof funcOrConst === 'number') {
-			if (target !== funcOrConst) start(get, funcOrConst, target);
-			return funcOrConst;
-		} else {
-			const result = funcOrConst.eased(get);
-			if (target !== funcOrConst.endValue) start(get, result, target);
-			else if (funcOrConst.isComplete(get)) {
-				store.set(easingFunctionOrConst, result);
-				onComplete?.(get, (v) => store.set(easingFunctionOrConst, v));
+): Atom<number> {
+	const easingFunctionOrConst = atom<Tweening | number | undefined>(undefined);
+	const result = atom(
+		(get) => {
+			const set = get(setterContainer);
+			const funcOrConst = get(easingFunctionOrConst);
+			const target = get(original);
+			if (!set) {
+				throw new Error(
+					'Cannot animate if nothing has ever subscribed to an animation in this store.'
+				);
 			}
-			return result;
+			if (typeof funcOrConst === 'undefined') {
+				set(easingFunctionOrConst, target);
+				return target;
+			} else if (typeof funcOrConst === 'number') {
+				if (target !== funcOrConst) start(get, set, funcOrConst, target);
+				return funcOrConst;
+			} else {
+				const result = funcOrConst.eased(get);
+				if (target !== funcOrConst.endValue) start(get, set, result, target);
+				else if (funcOrConst.isComplete(get)) {
+					set(easingFunctionOrConst, result);
+					onComplete?.(get, (v) => set(easingFunctionOrConst, v));
+				}
+				return result;
+			}
+		},
+		(get, set) => {
+			set(setterContainer, (s: Setter | undefined) => s ?? set);
 		}
-	});
+	);
+	result.onMount = (setter) => setter();
 
-	function start(get: Getter, startValue: number, endValue: number) {
-		store.set(easingFunctionOrConst, toEased(get, startValue, endValue));
+	function start(
+		get: Getter,
+		set: Setter,
+		startValue: number,
+		endValue: number
+	) {
+		set(easingFunctionOrConst, toEased(get, startValue, endValue));
 		onStart?.(get, startValue, endValue);
 	}
 
