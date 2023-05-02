@@ -34,6 +34,7 @@ export function tweenedSignal(
 
 	function start(get: Getter, startValue: number, endValue: number) {
 		store.set(easingFunctionOrConst, toEased(get, startValue, endValue));
+		onStart?.(get, startValue, endValue);
 	}
 
 	function toEased(
@@ -55,6 +56,7 @@ export function tweenedSignal(
 				);
 				if (factor >= 1) {
 					store.set(easingFunctionOrConst, endValue);
+					onComplete?.(get, (v) => store.set(easingFunctionOrConst, v));
 					return endValue;
 				}
 				return startValue + (endValue - startValue) * easing(factor);
