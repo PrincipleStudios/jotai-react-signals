@@ -5,7 +5,8 @@
 	"pnpm": {
 		"requiredScripts": [
 			"test",
-			"lint"
+			"lint",
+			"lint:pre-commit"
 		]
 	},
 	"devDependencies": {
