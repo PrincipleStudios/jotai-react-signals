@@ -19,14 +19,14 @@ Usage example, as a Storybook entry:
 ```tsx
 import { Story, Meta } from '@storybook/react';
 import { useMemo } from 'react';
-import { tweenedAtom } from '@mdekrey/jotai-animation-atom';
+import { tweenedAtom } from '@principlestudios/jotai-animation-atom';
 import {
 	useComputedAtom,
 	mapAttribute,
 	type PartialMapping,
 	withSignal,
 	useAsAtom,
-} from '@mdekrey/jotai-react-signals';
+} from '@principlestudios/jotai-react-signals';
 import { Easing } from '@tweenjs/tween.js';
 
 const sampleMapping = {

@@ -1,5 +1,5 @@
 {
-	"name": "@mdekrey/jotai-animation-atom",
+	"name": "@principlestudios/jotai-animation-atom",
 	"version": "0.4.0",
 	"description": "👻 Jotai animation utilities",
 	"main": "dist/index.js",
@@ -7,11 +7,11 @@
 	"types": "dist/index.d.ts",
 	"private": false,
 	"bugs": {
-	  "url": "https://github.com/mdekrey/jotai-react-signals/issues"
+	  "url": "https://github.com/principlestudios/jotai-react-signals/issues"
 	},
 	"repository": {
 	  "type": "git",
-	  "url": "https://github.com/mdekrey/jotai-react-signals.git"
+	  "url": "https://github.com/principlestudios/jotai-react-signals.git"
 	},
 	"exports": {
 	  ".": {

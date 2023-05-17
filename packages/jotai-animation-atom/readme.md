@@ -17,7 +17,10 @@ Usage example:
 
 ```tsx
 import { atom } from 'jotai';
-import { tweenedAtom, getAnimationSignal } from '@mdekrey/jotai-animation-atom';
+import {
+	tweenedAtom,
+	getAnimationSignal,
+} from '@principlestudios/jotai-animation-atom';
 
 const size = atom(15);
 const tweenedSize = tweenedAtom(size, Easing.Quadratic.Out);
