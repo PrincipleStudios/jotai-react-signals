@@ -118,7 +118,7 @@ importers:
       '@principlestudios/eslint-config':
         specifier: '*'
         version: link:../eslint-config
-      '@principlestudios/shared-tools':
+      '@principlestudios/shared':
         specifier: '*'
         version: link:../shared
 
@@ -134,7 +134,7 @@ importers:
       '@principlestudios/eslint-config':
         specifier: '*'
         version: link:../eslint-config
-      '@principlestudios/shared-tools':
+      '@principlestudios/shared':
         specifier: '*'
         version: link:../shared
 

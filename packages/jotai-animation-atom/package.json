@@ -57,6 +57,7 @@
 		"jotai": ">=2.0.0"
 	},
 	"devDependencies": {
-		"@principlestudios/eslint-config": "*"
+		"@principlestudios/eslint-config": "*",
+		"@principlestudios/shared": "*"
 	}
 }
