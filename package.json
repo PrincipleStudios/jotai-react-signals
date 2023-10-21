@@ -6,7 +6,8 @@
 		"requiredScripts": [
 			"test",
 			"lint",
-			"lint:pre-commit"
+			"lint:pre-commit",
+			"lint:fix"
 		]
 	},
 	"devDependencies": {
