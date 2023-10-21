@@ -107,11 +107,20 @@ importers:
         specifier: ^5.0.2
         version: 5.0.2
 
+  packages/eslint-config: {}
+
   packages/jotai-animation-atom:
     dependencies:
       jotai:
         specifier: '>=2.0.0'
         version: 2.0.3(react@18.2.0)
+    devDependencies:
+      '@principlestudios/eslint-config':
+        specifier: '*'
+        version: link:../eslint-config
+      '@principlestudios/shared-tools':
+        specifier: '*'
+        version: link:../shared
 
   packages/jotai-react-signals:
     dependencies:
@@ -121,6 +130,15 @@ importers:
       react:
         specifier: '>=17.0.0'
         version: 18.2.0
+    devDependencies:
+      '@principlestudios/eslint-config':
+        specifier: '*'
+        version: link:../eslint-config
+      '@principlestudios/shared-tools':
+        specifier: '*'
+        version: link:../shared
+
+  packages/shared: {}
 
 packages:
 

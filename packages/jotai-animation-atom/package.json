@@ -7,53 +7,56 @@
 	"types": "dist/index.d.ts",
 	"private": false,
 	"bugs": {
-	  "url": "https://github.com/principlestudios/jotai-react-signals/issues"
+		"url": "https://github.com/principlestudios/jotai-react-signals/issues"
 	},
 	"repository": {
-	  "type": "git",
-	  "url": "https://github.com/principlestudios/jotai-react-signals.git"
+		"type": "git",
+		"url": "https://github.com/principlestudios/jotai-react-signals.git"
 	},
 	"exports": {
-	  ".": {
+		".": {
 		"import": {
-		  "types": "./dist/index.d.ts",
-		  "default": "./dist/mjs/index.mjs"
+			"types": "./dist/index.d.ts",
+			"default": "./dist/mjs/index.mjs"
 		},
 		"types": "./dist/index.d.ts",
 		"default": "./dist/index.js"
-	  },
-	  "./*": {
+		},
+		"./*": {
 		"types": "./dist/*.d.ts",
 		"import": {
-		  "types": "./dist/*.d.ts",
-		  "default": "./dist/mjs/*.mjs"
+			"types": "./dist/*.d.ts",
+			"default": "./dist/mjs/*.mjs"
 		},
 		"default": "./dist/*.js"
-	  }
+		}
 	},
 	"scripts": {
-	  "prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
-	  "build": "rollup -c",
-	  "test": "jest",
-	  "prepack": "npm run lint && npm run build",
-	  "lint": "npm run typecheck && npm run eslint && npm run prettier",
-	  "lint:pre-commit": "npx lint-staged",
-	  "lint:fix": "npm run typecheck && npm run eslint:fix && npm run prettier:fix",
-	  "eslint": "eslint \"src/**/*.{js,ts,tsx}\"",
-	  "eslint:fix": "eslint \"src/**/*.{js,ts,tsx}\" --fix",
-	  "prettier": "prettier --list-different \"src/**/*.{js,ts,tsx}\"",
-	  "prettier:fix": "prettier --write \"src/**/*.{js,ts,tsx}\"",
-	  "typecheck": "tsc --noemit"
+		"prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
+		"build": "rollup -c",
+		"test": "jest",
+		"prepack": "npm run lint && npm run build",
+		"lint": "npm run typecheck && npm run eslint && npm run prettier",
+		"lint:pre-commit": "npx lint-staged",
+		"lint:fix": "npm run typecheck && npm run eslint:fix && npm run prettier:fix",
+		"eslint": "eslint \"src/**/*.{js,ts,tsx}\"",
+		"eslint:fix": "eslint \"src/**/*.{js,ts,tsx}\" --fix",
+		"prettier": "prettier --list-different \"src/**/*.{js,ts,tsx}\"",
+		"prettier:fix": "prettier --write \"src/**/*.{js,ts,tsx}\"",
+		"typecheck": "tsc --noemit"
 	},
 	"keywords": [
-	  "state",
-	  "jotai",
-	  "store",
-	  "signals"
+		"state",
+		"jotai",
+		"store",
+		"signals"
 	],
 	"author": "Matt DeKrey",
 	"license": "MIT",
 	"peerDependencies": {
-	  "jotai": ">=2.0.0"
+		"jotai": ">=2.0.0"
+	},
+	"devDependencies": {
+		"@principlestudios/eslint-config": "*"
 	}
-  }
+}

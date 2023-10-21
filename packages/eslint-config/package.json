@@ -1,0 +1,15 @@
+{
+	"name": "@principlestudios/eslint-config",
+	"version": "0.0.1",
+	"description": "Shared tools within this repository",
+	"private": true,
+	"scripts": {
+		"test": "jest",
+		"lint": "echo 0",
+		"lint:pre-commit": "echo 0",
+		"lint:fix": "echo 0"
+	},
+	"main": "index.js",
+	"author": "Matt DeKrey",
+	"license": "MIT"
+}
