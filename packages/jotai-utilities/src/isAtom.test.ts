@@ -1,5 +1,5 @@
 import { atom } from 'jotai';
-import { isAtom } from './utils';
+import { isAtom } from './isAtom';
 
 describe('isAtom', () => {
 	it('can identify a read-only atom', () => {

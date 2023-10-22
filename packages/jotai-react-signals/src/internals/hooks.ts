@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { type Atom, type PrimitiveAtom, atom, useSetAtom, Getter } from 'jotai';
-import { isAtom } from './utils';
+import { isAtom } from '@principlestudios/jotai-utilities/isAtom';
 
 export function useComputedAtom<T>(compute: (get: Getter) => T): Atom<T> {
 	const result = useRef<{

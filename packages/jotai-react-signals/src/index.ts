@@ -1,4 +1,3 @@
-export { isAtom } from './internals/utils';
 export { useComputedAtom, useAsAtom } from './internals/hooks';
 export {
 	type Mapping,

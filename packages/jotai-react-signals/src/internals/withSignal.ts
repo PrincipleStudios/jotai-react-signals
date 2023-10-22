@@ -8,7 +8,7 @@ import {
 	useEffect,
 	memo,
 } from 'react';
-import { isAtom } from './utils';
+import { isAtom } from '@principlestudios/jotai-utilities/isAtom';
 import {
 	mapStyle,
 	type Mapping,
