@@ -6,7 +6,8 @@
 		"requiredScripts": [
 			"test",
 			"lint",
-			"lint:pre-commit"
+			"lint:pre-commit",
+			"lint:fix"
 		]
 	},
 	"devDependencies": {
@@ -25,24 +26,25 @@
 		"@rollup/plugin-typescript": "^11.0.0",
 		"@testing-library/react": "^14.0.0",
 		"@types/jest": "^29.5.0",
+		"@types/node": "^20.8.7",
 		"@types/react": "18.0.28",
 		"@types/react-dom": "18.0.11",
-		"@typescript-eslint/eslint-plugin": "^5.54.0",
-		"@typescript-eslint/parser": "^5.54.0",
+		"@typescript-eslint/eslint-plugin": "^6.6.0",
+		"@typescript-eslint/parser": "^6.6.0",
 		"babel-jest": "^29.5.0",
-		"eslint": "8.35.0",
-		"eslint-config-prettier": "^8.6.0",
+		"eslint": "8.52.0",
+		"eslint-config-prettier": "^9.0.0",
 		"eslint-plugin-react": "^7.32.2",
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"jest": "^29.5.0",
 		"jest-environment-jsdom": "^29.5.0",
-		"jotai": "^2.0.3",
-		"prettier": "^2.8.4",
+		"jotai": "^2.4.3",
+		"prettier": "^3.0.3",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
 		"react-test-renderer": "^18.2.0",
 		"rollup": "^3.20.2",
 		"rollup-plugin-esbuild": "^5.0.0",
-		"typescript": "^5.0.2"
+		"typescript": "^5.3.0-beta"
 	}
 }

@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+      "declaration": false,
+      "target": "es6",
+      "outDir": "./dist/esm"
+    },
+    "exclude": ["**/*.test.ts"]
+}

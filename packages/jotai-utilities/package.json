@@ -1,10 +1,7 @@
 {
-	"name": "@principlestudios/jotai-react-signals",
-	"version": "0.4.1",
-	"description": "👻 React signals using Jotai",
-	"main": "dist/index.js",
-	"module": "dist/mjs/index.js",
-	"types": "dist/index.d.ts",
+	"name": "@principlestudios/jotai-utilities",
+	"version": "0.4.0",
+	"description": "👻 Utilities for using Jotai",
 	"private": false,
 	"bugs": {
 		"url": "https://github.com/principlestudios/jotai-react-signals/issues"
@@ -14,26 +11,21 @@
 		"url": "https://github.com/principlestudios/jotai-react-signals.git"
 	},
 	"exports": {
-		".": {
-			"import": {
-				"types": "./dist/index.d.ts",
-				"default": "./dist/mjs/index.mjs"
-			},
-			"types": "./dist/index.d.ts",
-			"default": "./dist/index.js"
-		},
 		"./*": {
 			"types": "./dist/*.d.ts",
 			"import": {
 				"types": "./dist/*.d.ts",
-				"default": "./dist/mjs/*.mjs"
+				"default": "./dist/mjs/*.js"
 			},
+			"require": "./dist/*.js",
 			"default": "./dist/*.js"
 		}
 	},
 	"scripts": {
 		"prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
-		"build": "rollup -c",
+		"build": "npm run build:cjs && npm run build:esm",
+		"build:cjs": "tsc -p tsconfig.cjs.json",
+		"build:esm": "tsc -p tsconfig.esm.json",
 		"postbuild": "pwsh ./scripts/post-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
 		"test": "jest",
 		"prepack": "npm run lint && npm run build",
@@ -55,15 +47,12 @@
 	],
 	"author": "Matt DeKrey",
 	"license": "MIT",
-  "dependencies": {
-    "@principlestudios/jotai-utilities": "*"
-  },
 	"peerDependencies": {
-		"jotai": ">=2.0.0",
-		"react": ">=17.0.0"
+		"jotai": ">=2.0.0"
 	},
 	"devDependencies": {
 		"@principlestudios/eslint-config": "*",
-		"@principlestudios/shared": "*"
+		"@principlestudios/shared": "*",
+		"glob-promise": "^6.0.5"
 	}
 }

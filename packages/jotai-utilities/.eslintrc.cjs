@@ -6,4 +6,5 @@ module.exports = {
 	},
 	extends: ['@principlestudios'],
 	overrides: [],
+	ignorePatterns: ['/dist/**/*'],
 };

@@ -8,7 +8,7 @@ import {
 	useEffect,
 	memo,
 } from 'react';
-import { isAtom } from './utils';
+import { isAtom } from '@principlestudios/jotai-utilities/isAtom';
 import {
 	mapStyle,
 	type Mapping,
@@ -38,7 +38,7 @@ type MergeMappingProp<TRaw, TAtom> =
 
 type WithSignalProps<
 	T extends AnyIntrinsicElement,
-	TMapping extends Mapping
+	TMapping extends Mapping,
 > = {
 	[K in keyof T]: K extends 'style'
 		? T[K] extends CSSProperties | undefined
@@ -51,7 +51,7 @@ type WithSignalProps<
 
 function toPropsObj<
 	T extends { style?: CSSProperties },
-	TMapping extends Mapping
+	TMapping extends Mapping,
 >(get: Getter, props: WithSignalProps<T, TMapping>): T {
 	return Object.fromEntries(
 		Object.entries(props).map(([key, value]) => {
@@ -138,7 +138,7 @@ function setupSetter<TElement extends Element, TMapping extends Mapping>(
 type SignalEntry = [key: string, value: Atom<unknown>];
 function toSignalEntries<
 	T extends AnyIntrinsicElementTag,
-	TMapping extends Mapping
+	TMapping extends Mapping,
 >(target: WithSignalProps<JSX.IntrinsicElements[T], TMapping>): SignalEntry[] {
 	return Object.entries(target).flatMap(([key, value]): SignalEntry[] => {
 		if (isAtom(value)) return [[key, value]];
@@ -163,7 +163,7 @@ export function withSignal<T extends AnyIntrinsicElementTag>(
 >;
 export function withSignal<
 	T extends AnyIntrinsicElementTag,
-	TMapping extends Mapping
+	TMapping extends Mapping,
 >(
 	elem: T,
 	map: CompleteMapping<RefType<T> & Element, TMapping>
@@ -175,7 +175,7 @@ export function withSignal<
 >;
 export function withSignal<
 	T extends AnyIntrinsicElementTag,
-	TMapping extends Mapping
+	TMapping extends Mapping,
 >(
 	elem: T,
 	map: CompleteMapping<RefType<T> & Element, TMapping> = {} as CompleteMapping<

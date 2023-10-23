@@ -8,14 +8,14 @@
         "inlineSourceMap": false,
         "jsx": "react-jsx",
         "lib": ["dom", "esnext"],
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+        "moduleResolution": "node",
         "noFallthroughCasesInSwitch": true,
         "resolveJsonModule": true,
         "rootDir": "src",
+        "outDir": "dist",
         "skipLibCheck": true,
         "strict": true,
-        "types": ["node", "jest"]
+        "types": ["jest"]
     },
     "compileOnSave": false,
     "exclude": ["node_modules", "dist"],
