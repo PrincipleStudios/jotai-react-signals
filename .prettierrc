@@ -1,0 +1,6 @@
+{
+	"useTabs": true,
+	"singleQuote": true,
+	"endOfLine": "auto",
+	"trailingComma": "es5"
+}
