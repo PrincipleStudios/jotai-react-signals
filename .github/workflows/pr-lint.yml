@@ -49,4 +49,6 @@ jobs:
     ###########
     # Run linter
     - name: Restore dependencies
+      run: pnpm -r build # Build ensures typecheck passes
+    - name: Restore dependencies
       run: pnpm -r lint
