@@ -1,4 +1,4 @@
-name: Lint packages on PR
+name: Test packages on PR
 
 on:
   push:
@@ -50,5 +50,5 @@ jobs:
     # Run linter
     - name: Build packages
       run: pnpm -r build # Build ensures typecheck passes
-    - name: Run linters
-      run: pnpm -r lint
+    - name: Run tests
+      run: pnpm -r test
