@@ -35,7 +35,6 @@
 		"prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
 		"build": "rollup -c",
 		"test": "jest",
-		"prepack": "npm run lint && npm run build",
 		"lint": "npm run typecheck && npm run eslint && npm run prettier",
 		"lint:pre-commit": "npx lint-staged",
 		"lint:fix": "npm run typecheck && npm run eslint:fix && npm run prettier:fix",

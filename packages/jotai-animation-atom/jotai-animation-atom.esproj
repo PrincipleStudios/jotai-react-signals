@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+	<Import Project="$(RepositoryEngineeringDir)pnpm.targets" />
+
+	<ItemGroup>
+	</ItemGroup>
+</Project>

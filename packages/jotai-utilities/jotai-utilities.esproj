@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+	<Import Project="$(RepositoryEngineeringDir)pnpm.targets" />
+
+	<ItemGroup>
+		<CompileOutputs Remove="dist/index.js" />
+		<CompileOutputs Include="dist/isAtom.js" />
+		<CompileOutputs Include="dist/isAtom.d.ts" />
+	</ItemGroup>
+</Project>
