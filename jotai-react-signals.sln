@@ -9,6 +9,8 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "jotai-react-signals", "pack
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "jotai-animation-atom", "packages\jotai-animation-atom\jotai-animation-atom.esproj", "{D23311DB-5745-48EE-9F07-2E04CED3D4C2}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "react-jotai-forms", "packages\react-jotai-forms\react-jotai-forms.esproj", "{239EC360-227C-4D42-A2BA-E504F0B2C4E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D23311DB-5745-48EE-9F07-2E04CED3D4C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D23311DB-5745-48EE-9F07-2E04CED3D4C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D23311DB-5745-48EE-9F07-2E04CED3D4C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{239EC360-227C-4D42-A2BA-E504F0B2C4E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{239EC360-227C-4D42-A2BA-E504F0B2C4E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{239EC360-227C-4D42-A2BA-E504F0B2C4E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{239EC360-227C-4D42-A2BA-E504F0B2C4E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

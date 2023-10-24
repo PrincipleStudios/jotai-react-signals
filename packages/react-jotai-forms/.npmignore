@@ -1,0 +1,8 @@
+/.husky
+/.vscode
+/scripts
+/src
+.*
+tsconfig*.json
+*.tgz
+/*.config.*js

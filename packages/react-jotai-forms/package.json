@@ -1,29 +1,75 @@
 {
-  "name": "@principlestudios/react-jotai-forms",
-  "version": "0.1.0",
-  "description": "",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "prepack": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "peerDependencies": {
-    "react": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.31",
-    "react": "^18.2.0",
-    "typescript": "5.2.2"
-  },
+	"name": "@principlestudios/react-jotai-forms",
+	"version": "0.1.0",
+	"description": "👻 React Forms using Jotai",
+	"main": "dist/index.js",
+	"module": "dist/mjs/index.js",
+	"types": "dist/index.d.ts",
+	"private": false,
+	"bugs": {
+		"url": "https://github.com/principlestudios/jotai-react-signals/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/principlestudios/jotai-react-signals.git"
+	},
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/mjs/index.mjs"
+			},
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./*": {
+			"types": "./dist/*.d.ts",
+			"import": {
+				"types": "./dist/*.d.ts",
+				"default": "./dist/mjs/*.mjs"
+			},
+			"default": "./dist/*.js"
+		}
+	},
+	"scripts": {
+		"prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
+		"build": "rollup -c",
+		"postbuild": "pwsh ./scripts/post-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
+		"test": "jest",
+		"lint": "npm run typecheck && npm run eslint && npm run prettier",
+		"lint:pre-commit": "npx lint-staged",
+		"lint:fix": "npm run typecheck && npm run eslint:fix && npm run prettier:fix",
+		"eslint": "eslint \"src/**/*.{js,ts,tsx}\"",
+		"eslint:fix": "eslint \"src/**/*.{js,ts,tsx}\" --fix",
+		"prettier": "prettier --list-different \"src/**/*.{js,ts,tsx}\"",
+		"prettier:fix": "prettier --write \"src/**/*.{js,ts,tsx}\"",
+		"typecheck": "tsc --noemit"
+	},
+	"keywords": [
+		"react",
+		"forms",
+		"jotai"
+	],
+	"author": "Matt DeKrey",
+	"license": "MIT",
   "dependencies": {
-    "@principlestudios/jotai-react-signals": "^0.4.1",
-    "immer": "^10.0.3",
-    "jotai": "^2.4.3",
-    "zod": "^3.22.4"
-  }
+		"@principlestudios/jotai-react-signals": "^0.4.1",
+    "@principlestudios/jotai-utilities": "*"
+  },
+	"peerDependencies": {
+		"jotai": ">=2.0.0",
+		"react": ">=17.0.0",
+		"immer": "^10.0.3",
+		"zod": "^3.22.4"
+	},
+	"devDependencies": {
+    "@principlestudios/shared": "*",
+    "@principlestudios/eslint-config": "*",
+		"@types/react": "^18.2.31",
+		"react": "^18.2.0",
+		"jotai": "^2.5.0",
+		"typescript": "5.2.2",
+		"immer": "^10.0.3",
+		"zod": "^3.22.4"
+	}
 }

@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": false,
+        "baseUrl": "src",
+        "declaration": true,
+        "esModuleInterop": true,
+        "inlineSourceMap": false,
+        "jsx": "react-jsx",
+        "lib": ["dom", "esnext"],
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "noFallthroughCasesInSwitch": true,
+        "resolveJsonModule": true,
+        "rootDir": "src",
+        "skipLibCheck": true,
+        "strict": true,
+        "types": ["node", "jest"]
+    },
+    "compileOnSave": false,
+    "exclude": ["node_modules", "dist"],
+    "include": ["src"]
+}
