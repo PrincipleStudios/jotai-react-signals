@@ -2,10 +2,14 @@
 	<Import Project="$(RepositoryEngineeringDir)pnpm.targets" />
 
 	<ItemGroup>
+		<ProjectReference Include="../jotai-react-signals/jotai-react-signals.esproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<CompileOutputs Remove="dist/index.js" />
 		<Source Include="src/*.ts" />
 		<Source Include="src/*.tsx" />
-		<Source Remove="src/**/*.test.*" />
+		<Source Remove="src/*.test.*" />
 		<CompileOutputs Include="@(Source->'dist/%(filename).js')" />
 		<CompileOutputs Include="@(Source->'dist/esm/%(filename).js')" />
 		<CompileOutputs Include="@(Source->'dist/%(filename).d.ts')" />

@@ -30,7 +30,7 @@ const identity = <T>(orig: T) => orig;
 export function toInternalFieldAtom<TValue, TFieldValue>(
 	store: ReturnType<typeof useStore>,
 	fieldValueAtom: StandardWritableAtom<TValue>,
-	options: Partial<FieldOptions<TValue, TFieldValue>> = {},
+	options: Partial<FieldOptions<TValue, TFieldValue>> = {}
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): UseFieldResult<TFieldValue, any> {
 	const fieldEvents = new FieldEvents(options.formEvents);
@@ -41,13 +41,11 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 			toForm: identity,
 			fromForm: identity,
 		} as unknown as FieldMapping<TValue, TFieldValue>);
-	const formValueAtom = mapping
-		? mapAtom<TValue, TFieldValue>(
-				fieldValueAtom,
-				mapping.toForm,
-				mapping.fromForm,
-		  )
-		: (fieldValueAtom as unknown as StandardWritableAtom<TFieldValue>);
+	const formValueAtom = mapAtom<TValue, TFieldValue>(
+		fieldValueAtom,
+		mapping.toForm,
+		mapping.fromForm
+	);
 
 	const schema = 'schema' in options ? options.schema : null;
 	const errors = schema
@@ -57,7 +55,7 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 		: undefined;
 
 	function contextToAtom<TState>(
-		callback: FieldStateCallback<TState, TValue, TFieldValue>,
+		callback: FieldStateCallback<TState, TValue, TFieldValue>
 	) {
 		return atom((get) =>
 			callback(
@@ -72,8 +70,8 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 						return get(errors ?? noErrorsAtom);
 					},
 				},
-				get,
-			),
+				get
+			)
 		);
 	}
 
@@ -89,6 +87,7 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 	const readOnly = toFieldStateValue(deepReadOnly);
 
 	const setValue = (v: TFieldValue | ((prev: TFieldValue) => TFieldValue)) => {
+		console.log('setValue', v);
 		if (store.get(disabled) || store.get(readOnly)) return;
 		store.set(formValueAtom, v);
 	};
@@ -110,7 +109,7 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 		},
 		htmlProps: buildHtmlProps(),
 		applyMapping: <TNew>(
-			newMapping: FieldMapping<TFieldValue, TNew>,
+			newMapping: FieldMapping<TFieldValue, TNew>
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		): UseFieldResult<TNew, any> => {
 			const newOptions: Partial<FieldOptions<TValue, TNew>> = {
@@ -129,11 +128,11 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 			};
 			return toInternalFieldAtom(store, fieldValueAtom, newOptions);
 		},
-	};
+	} as UseFieldResult<TFieldValue>;
 
 	function createErrorStrategyAtom(
 		schema: ZodType<TValue>,
-		strategy: RegisterErrorStrategy,
+		strategy: RegisterErrorStrategy
 	) {
 		const [result, trigger] = createTriggeredErrorsAtom(fieldValueAtom, schema);
 		strategy(fieldEvents, () => store.set(trigger));
@@ -151,7 +150,7 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 				htmlAtom,
 				fieldEvents,
 				disabled,
-				readOnly,
+				readOnly
 			);
 		} as ToHtmlInputProps<TFieldValue> as ToHtmlProps<TFieldValue>;
 		toInput.asControlled =
@@ -162,7 +161,7 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 					formValueAtom,
 					fieldEvents,
 					disabled,
-					readOnly,
+					readOnly
 				);
 			};
 
@@ -177,7 +176,7 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 				htmlAtom,
 				fieldEvents,
 				disabled,
-				readOnly,
+				readOnly
 			);
 		} as ToHtmlProps<TFieldValue>['asCheckbox'];
 
@@ -191,7 +190,7 @@ function toControlledField<T>(
 	atom: StandardWritableAtom<T>,
 	fieldEvents: FieldEvents,
 	disabled: Atom<boolean>,
-	readOnly: Atom<boolean>,
+	readOnly: Atom<boolean>
 ): ControlledHtmlProps<T> {
 	return {
 		value: atom,
@@ -215,7 +214,7 @@ function toInputTextField(
 	atom: Atom<string>,
 	fieldEvents: FieldEvents,
 	disabled: Atom<boolean>,
-	readOnly: Atom<boolean>,
+	readOnly: Atom<boolean>
 ): InputHtmlProps {
 	return {
 		defaultValue: atom,
@@ -240,7 +239,7 @@ function toInputCheckboxField(
 	atom: StandardWritableAtom<boolean>,
 	fieldEvents: FieldEvents,
 	disabled: Atom<boolean>,
-	readOnly: Atom<boolean>,
+	readOnly: Atom<boolean>
 ): CheckboxHtmlProps {
 	return {
 		defaultChecked: atom,

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { useStore } from 'jotai';
 import type { MutableRefObject } from 'react';
-import type React from 'react';
 import type { ZodType } from 'zod';
 import type { StandardWritableAtom } from './StandardWritableAtom';
 import type { AnyPath, Path, PathValue } from '../path';
@@ -107,7 +106,7 @@ export type FormFieldsOptions<T, TFields extends FieldsConfig<T>> = {
 };
 
 export type AtomFamily<T> = <TPath extends Path<T>>(
-	path: TPath,
+	path: TPath
 ) => StandardWritableAtom<PathValue<T, TPath>>;
 
 export type UseFieldsResult<
@@ -172,7 +171,7 @@ export function buildFormResult<T>({
 		atom,
 		errors,
 		field<TPath extends Path<T>>(
-			path: TPath,
+			path: TPath
 		): FormFieldReturnType<PathValue<T, TPath>, DefaultFormFieldResultFlags> {
 			return toField<T, TPath, PathValue<T, TPath>>({ path }, formContext);
 		},
@@ -212,19 +211,19 @@ type FormResultContext<T> = Pick<
 
 export function buildFormField<T>(
 	field: BaseAnyFieldConfig<T>,
-	params: FormResultContext<T>,
+	params: FormResultContext<T>
 ): FormFieldReturnTypeFromConfig<T, BaseAnyFieldConfig<T>>;
 export function buildFormField<T, TFieldConfig extends BaseAnyFieldConfig<T>>(
 	field: TFieldConfig & InferredFieldConfig<T, TFieldConfig>,
-	params: FormResultContext<T>,
+	params: FormResultContext<T>
 ): FormFieldReturnTypeFromConfig<T, TFieldConfig>;
 export function buildFormField<T, TFieldConfig extends BaseAnyFieldConfig<T>>(
 	field: TFieldConfig & InferredFieldConfig<T, TFieldConfig>,
-	params: FormResultContext<T>,
+	params: FormResultContext<T>
 ): FormFieldReturnTypeFromConfig<T, TFieldConfig> {
 	return toField<T, TFieldConfig>(
 		toConfigObject<T, TFieldConfig>(field),
-		params,
+		params
 	);
 }
 
@@ -242,21 +241,21 @@ export function buildFormFields<
 							buildFormField(config(...args), params)
 					: buildFormField(config, params),
 			];
-		}),
+		})
 	) as never as FormFields<T, TFields>;
 }
 
 function toField<T, TConfig extends BaseAnyFieldConfig<T>>(
 	config: InferredFieldConfigObject<T, TConfig>,
-	context: FormResultContext<T>,
+	context: FormResultContext<T>
 ): FormFieldReturnTypeFromConfig<T, TConfig>;
 function toField<T, TPath extends Path<T>, TValue>(
 	config: FieldConfig<T, TPath, TValue>,
-	context: FormResultContext<T>,
+	context: FormResultContext<T>
 ): FormFieldReturnType<TValue, DefaultFormFieldResultFlags>;
 function toField<T, TPath extends Path<T>, TValue>(
 	config: FieldConfig<T, TPath, TValue>,
-	context: FormResultContext<T>,
+	context: FormResultContext<T>
 ): FormFieldReturnType<TValue, DefaultFormFieldResultFlags> {
 	const result = toFormSubset<T, TPath, TValue>(config, context);
 	const options: Partial<FieldOptions<PathValue<T, TPath>, TValue>> = {
@@ -275,7 +274,7 @@ function toField<T, TPath extends Path<T>, TValue>(
 					...context.translationPath,
 					...(config.translationPath ?? (config.path as AnyPath)),
 					...(typeof part === 'string' ? [part] : part),
-				].join('.'),
+				].join('.')
 			),
 		disabled: substateAtom(config.disabled, context.disabledFields),
 		readOnly: substateAtom(config.readOnly, context.readOnlyFields),
@@ -284,7 +283,7 @@ function toField<T, TPath extends Path<T>, TValue>(
 	const fieldResult = toInternalFieldAtom<PathValue<T, TPath>, TValue>(
 		context.store,
 		unmappedAtom,
-		options,
+		options
 	) as UseFieldResult<TValue, DefaultFormFieldResultFlags>;
 
 	return {
@@ -296,7 +295,7 @@ function toField<T, TPath extends Path<T>, TValue>(
 		value:
 			| undefined
 			| FieldStateOverride<T, PathValue<T, TPath>, TValue, TState>,
-		state: FieldStateAtom<TState>,
+		state: FieldStateAtom<TState>
 	):
 		| FieldStateAtom<TState>
 		| FieldStateCallback<PerFieldState<TState>, PathValue<T, TPath>, TValue> {
@@ -317,7 +316,7 @@ function toField<T, TPath extends Path<T>, TValue>(
 							return props.errors;
 						},
 					},
-					getter,
+					getter
 				);
 		}
 		if (value === undefined)
@@ -329,7 +328,7 @@ function toField<T, TPath extends Path<T>, TValue>(
 
 function toFormSubset<T, TPath extends Path<T>, TValue>(
 	config: FieldConfig<T, TPath, TValue>,
-	options: FormResultContext<T>,
+	options: FormResultContext<T>
 ): UseFormResult<TValue> {
 	const schema: ZodType<TValue> =
 		config?.schema ??
@@ -342,7 +341,7 @@ function toFormSubset<T, TPath extends Path<T>, TValue>(
 		? mapAtom<PathValue<T, TPath>, TValue>(
 				unmappedAtom,
 				mapping.toForm,
-				mapping.fromForm,
+				mapping.fromForm
 		  )
 		: (unmappedAtom as StandardWritableAtom<TValue>);
 	const atomFamily = createPathAtomFamily(resultAtom);
@@ -365,11 +364,11 @@ function toFormSubset<T, TPath extends Path<T>, TValue>(
 		defaultValue: resultDefaultValue,
 		disabledFields: walkFieldStateAtom(
 			options.disabledFields,
-			config.path as AnyPath,
+			config.path as AnyPath
 		),
 		readOnlyFields: walkFieldStateAtom(
 			options.readOnlyFields,
-			config.path as AnyPath,
+			config.path as AnyPath
 		),
 	});
 }
@@ -383,17 +382,17 @@ function toJsonPointer(path: AnyPath) {
 }
 
 export function createPathAtomFamily<T>(
-	formAtom: StandardWritableAtom<T>,
+	formAtom: StandardWritableAtom<T>
 ): AtomFamily<T> {
 	return createAtomFamily<Path<T>, StandardWritableAtom<unknown>>(
 		(path) => getAtomForPath(path, formAtom) as StandardWritableAtom<unknown>,
-		(a, b) => toJsonPointer(a) === toJsonPointer(b),
+		(a, b) => toJsonPointer(a) === toJsonPointer(b)
 	) as AtomFamily<T>;
 }
 
 function getRefForPath<T, TPath extends Path<T>, TValue>(
 	config: FieldConfig<T, TPath, TValue>,
-	source: React.MutableRefObject<T>,
+	source: React.MutableRefObject<T>
 ): React.MutableRefObject<TValue> {
 	const mapping = config.mapping as FieldMapping<PathValue<T, TPath>, TValue>;
 	const getPathValue = () =>

@@ -15,10 +15,6 @@ import type {
 import type { FieldTranslation } from './FieldTranslation';
 import type { ErrorsAtom } from './ErrorsAtom';
 
-export type DefaultUseFieldResultFlags = {
-	hasErrors: true;
-	hasTranslations: true;
-};
 export type UseFieldResultFlags = {
 	hasErrors: boolean;
 	hasTranslations: boolean;
@@ -48,7 +44,7 @@ export type FieldStateContext<TOriginalValue, TDerivedValue> = {
 
 export type FieldStateCallback<T, TOriginalValue, TDerivedValue> = (
 	context: FieldStateContext<TOriginalValue, TDerivedValue>,
-	get: Getter,
+	get: Getter
 ) => T;
 
 export type FieldOptions<TValue, TFormFieldValue> = {

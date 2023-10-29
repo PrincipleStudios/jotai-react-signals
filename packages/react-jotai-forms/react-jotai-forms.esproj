@@ -3,5 +3,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="../jotai-utilities/jotai-utilities.esproj" />
+		<ProjectReference Include="../react-jotai-form-components/react-jotai-form-components.esproj" />
 	</ItemGroup>
 </Project>

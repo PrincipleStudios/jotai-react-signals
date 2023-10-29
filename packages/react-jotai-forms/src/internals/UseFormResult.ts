@@ -1,6 +1,5 @@
 import type { Atom } from 'jotai';
 import type { useStore } from 'jotai';
-import type React from 'react';
 import type { ZodError, ZodType } from 'zod';
 import type { StandardWritableAtom } from './StandardWritableAtom';
 import type { AnyPath, Path, PathValue } from '../path';
@@ -25,7 +24,7 @@ export interface UseFormResult<T> {
 	readOnlyFields: FieldStateAtom<boolean>;
 	formTranslation: (field: string) => string;
 	field<TPath extends Path<T>>(
-		path: TPath,
+		path: TPath
 	): FormFieldReturnType<PathValue<T, TPath>, DefaultFormFieldResultFlags>;
 	updateAllErrors(this: void): void;
 
@@ -33,7 +32,7 @@ export interface UseFormResult<T> {
 	set(this: void, value: T | ((prevValue: T) => T)): void;
 	handleSubmit(
 		this: void,
-		callback: (value: T) => void | Promise<void>,
+		callback: (value: T) => void | Promise<void>
 	): (ev?: React.SyntheticEvent<unknown>) => void;
 	errorStrategy: RegisterErrorStrategy;
 }

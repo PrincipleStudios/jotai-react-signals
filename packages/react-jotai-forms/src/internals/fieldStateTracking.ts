@@ -2,7 +2,7 @@ import type { Atom, WritableAtom } from 'jotai';
 import { atom } from 'jotai';
 import type { AnyPath } from '../path';
 import { produce } from 'immer';
-import { isAtom } from '@principlestudios/jotai-react-signals';
+import { isAtom } from '@principlestudios/jotai-utilities/isAtom';
 
 export type SetStateNoInitialAction<T> = (prev: T | undefined) => T;
 export type NoInitialWritableAtom<Value> = WritableAtom<

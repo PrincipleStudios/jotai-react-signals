@@ -1,7 +1,7 @@
 {
-	"name": "@principlestudios/jotai-utilities",
-	"version": "0.4.0",
-	"description": "👻 Utilities for using Jotai",
+	"name": "@principlestudios/react-jotai-form-components",
+	"version": "0.1.0",
+	"description": "👻 Form components for use with @principlestudios/react-jotai-form",
 	"private": false,
 	"bugs": {
 		"url": "https://github.com/principlestudios/jotai-react-signals/issues"
@@ -46,6 +46,10 @@
 	],
 	"author": "Matt DeKrey",
 	"license": "MIT",
+	"dependencies": {
+		"@principlestudios/jotai-react-signals": "link:..\\jotai-react-signals",
+		"jotai": "^2.5.0"
+	},
 	"peerDependencies": {
 		"jotai": ">=2.0.0"
 	},
@@ -53,8 +57,5 @@
 		"@principlestudios/eslint-config": "^0.0.1",
 		"@principlestudios/shared": "^0.0.1",
 		"glob-promise": "^6.0.5"
-	},
-	"dependencies": {
-		"jotai": "^2.5.0"
 	}
 }

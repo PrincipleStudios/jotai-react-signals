@@ -4,8 +4,8 @@ export type IfTrueThenProp<
 > = T extends true
 	? TProp
 	: T extends false | undefined
-	? object
-	: Partial<TProp>;
+	? { [K in keyof TProp]?: undefined }
+	: TProp | { [K in keyof TProp]?: undefined };
 
 export type IfTrueThenElse<
 	T extends boolean | undefined,

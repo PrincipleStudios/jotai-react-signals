@@ -10,7 +10,6 @@ import type {
 	Flags,
 	MappedOptions,
 	FieldOptions,
-	DefaultUseFieldResultFlags,
 	ToHtmlProps,
 } from './internals/useFieldHelpers';
 import type { ErrorsAtom } from './internals/ErrorsAtom';
@@ -23,11 +22,11 @@ import type { IfTrueThenProp } from './internals/type-helpers';
  * Represents the result of using a form field with various properties and methods.
  *
  * @template TFieldValue - The type of the field's value.
- * @template TFlags - The type of flags associated with the field (defaulting to DefaultUseFieldResultFlags).
+ * @template TFlags - The type of flags associated with the field (defaulting to an unknown set of flags).
  */
 export type UseFieldResult<
 	TFieldValue,
-	TFlags extends UseFieldResultFlags = DefaultUseFieldResultFlags,
+	TFlags extends UseFieldResultFlags = UseFieldResultFlags,
 > = {
 	/** An atom representing the field's value. */
 	value: PrimitiveAtom<TFieldValue>;
@@ -39,12 +38,10 @@ export type UseFieldResult<
 	setValue(v: TFieldValue | ((prev: TFieldValue) => TFieldValue)): void;
 	/** A function to get the field's value. */
 	getValue(): TFieldValue;
-	/** An optional atom representing field errors. */
-	errors?: ErrorsAtom;
 	/** A function to handle field value change. */
 	onChange(
 		this: void,
-		v: TFieldValue | ((prev: TFieldValue) => TFieldValue),
+		v: TFieldValue | ((prev: TFieldValue) => TFieldValue)
 	): void;
 	/** A function to handle the field's blur event. */
 	onBlur(this: void): void;
@@ -52,7 +49,7 @@ export type UseFieldResult<
 	htmlProps: ToHtmlProps<TFieldValue>;
 	/** A function to apply a mapping to the field's value. */
 	applyMapping<TNewValue>(
-		mapping: FieldMapping<TFieldValue, TNewValue>,
+		mapping: FieldMapping<TFieldValue, TNewValue>
 	): UseFieldResult<TNewValue, TFlags>;
 } & IfTrueThenProp<
 	TFlags['hasErrors'],
@@ -74,7 +71,7 @@ export type UseFieldResult<
 export type UseUpdatableFieldResult<
 	TValue,
 	TFieldValue,
-	TFlags extends UseFieldResultFlags = DefaultUseFieldResultFlags,
+	TFlags extends UseFieldResultFlags = UseFieldResultFlags,
 > = UseFieldResult<TFieldValue, TFlags> & {
 	/** The value of the actual field */
 	fieldValue: StandardWritableAtom<TValue>;
@@ -82,14 +79,14 @@ export type UseUpdatableFieldResult<
 
 function useInternalFieldAtom<TValue, TFieldValue>(
 	fieldValueAtom: StandardWritableAtom<TValue>,
-	options: Partial<FieldOptions<TValue, TFieldValue>> = {},
+	options: Partial<FieldOptions<TValue, TFieldValue>> = {}
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): UseFieldResult<TFieldValue, any> {
 	const store = useStore();
 	return useMemo(
 		() => toInternalFieldAtom(store, fieldValueAtom, options),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[store, fieldValueAtom],
+		[store, fieldValueAtom]
 	);
 }
 
@@ -109,13 +106,13 @@ export function useField<
 	const TOptions extends UnmappedOptions<TValue> | MappedOptions<TValue, any>,
 >(
 	defaultValue: TValue,
-	options: TOptions,
+	options: TOptions
 ): TOptions extends MappedOptions<TValue, infer TFieldValue>
 	? UseUpdatableFieldResult<TValue, TFieldValue, Flags<TOptions>>
 	: UseUpdatableFieldResult<TValue, TValue, Flags<TOptions>>;
 export function useField<TValue, TFieldValue>(
 	defaultValue: TValue,
-	options: Partial<FieldOptions<TValue, TFieldValue>> = {},
+	options: Partial<FieldOptions<TValue, TFieldValue>> = {}
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): UseUpdatableFieldResult<TValue, TFieldValue, any> {
 	const fieldValueAtom = useConstant(() => atom<TValue>(defaultValue));

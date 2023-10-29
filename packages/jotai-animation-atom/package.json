@@ -15,20 +15,20 @@
 	},
 	"exports": {
 		".": {
-		"import": {
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/mjs/index.mjs"
+			},
 			"types": "./dist/index.d.ts",
-			"default": "./dist/mjs/index.mjs"
-		},
-		"types": "./dist/index.d.ts",
-		"default": "./dist/index.js"
+			"default": "./dist/index.js"
 		},
 		"./*": {
-		"types": "./dist/*.d.ts",
-		"import": {
 			"types": "./dist/*.d.ts",
-			"default": "./dist/mjs/*.mjs"
-		},
-		"default": "./dist/*.js"
+			"import": {
+				"types": "./dist/*.d.ts",
+				"default": "./dist/mjs/*.mjs"
+			},
+			"default": "./dist/*.js"
 		}
 	},
 	"scripts": {
@@ -56,7 +56,10 @@
 		"jotai": ">=2.0.0"
 	},
 	"devDependencies": {
-		"@principlestudios/eslint-config": "*",
-		"@principlestudios/shared": "*"
+		"@principlestudios/eslint-config": "^0.0.1",
+		"@principlestudios/shared": "^0.0.1"
+	},
+	"dependencies": {
+		"jotai": "^2.5.0"
 	}
 }

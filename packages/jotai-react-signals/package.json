@@ -1,6 +1,6 @@
 {
 	"name": "@principlestudios/jotai-react-signals",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"description": "👻 React signals using Jotai",
 	"main": "dist/index.js",
 	"module": "dist/mjs/index.js",
@@ -54,15 +54,17 @@
 	],
 	"author": "Matt DeKrey",
 	"license": "MIT",
-  "dependencies": {
-    "@principlestudios/jotai-utilities": "*"
-  },
+	"dependencies": {
+		"@principlestudios/jotai-utilities": "^0.4.0",
+		"jotai": "^2.5.0",
+		"react": "^18.2.0"
+	},
 	"peerDependencies": {
 		"jotai": ">=2.0.0",
 		"react": ">=17.0.0"
 	},
 	"devDependencies": {
-		"@principlestudios/eslint-config": "*",
-		"@principlestudios/shared": "*"
+		"@principlestudios/eslint-config": "^0.0.1",
+		"@principlestudios/shared": "^0.0.1"
 	}
 }
