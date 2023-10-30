@@ -39,8 +39,19 @@ describe('type-helpers', () => {
 			const result = ((): IfTrueThenProp<boolean, { one: 1; two: 2 }> => {
 				// This result is only for use checking TS inference with this type
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				return null as any;
+				return { one: 1, two: 2 };
 			})();
+
+			true satisfies (typeof result)['one'] extends 1 | undefined
+				? true
+				: false;
+			true satisfies 1 extends (typeof result)['one'] ? true : false;
+			true satisfies undefined extends (typeof result)['one'] ? true : false;
+			true satisfies (typeof result)['two'] extends 2 | undefined
+				? true
+				: false;
+			true satisfies 2 extends (typeof result)['two'] ? true : false;
+			true satisfies undefined extends (typeof result)['two'] ? true : false;
 
 			if (result.one === 1) {
 				// If it knows one, it knows two, and since one is 1, two is 2.
