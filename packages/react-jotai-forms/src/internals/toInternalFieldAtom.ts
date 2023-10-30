@@ -87,7 +87,6 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 	const readOnly = toFieldStateValue(deepReadOnly);
 
 	const setValue = (v: TFieldValue | ((prev: TFieldValue) => TFieldValue)) => {
-		console.log('setValue', v);
 		if (store.get(disabled) || store.get(readOnly)) return;
 		store.set(formValueAtom, v);
 	};
