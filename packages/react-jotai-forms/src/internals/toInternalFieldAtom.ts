@@ -6,7 +6,12 @@ import {
 	createErrorsAtom,
 	createTriggeredErrorsAtom,
 } from './createErrorsAtom';
-import type { FieldStateCallback } from './useFieldHelpers';
+import type {
+	FieldStateCallback,
+	Flags,
+	MappedOptions,
+	UnmappedOptions,
+} from './useFieldHelpers';
 import {
 	type FieldOptions,
 	type ToHtmlInputProps,
@@ -27,12 +32,42 @@ import { toFieldStateValue, toWritableAtom } from './fieldStateTracking';
 import type { UseFieldResult } from '../useField';
 
 const identity = <T>(orig: T) => orig;
+export function toInternalFieldAtom<
+	TValue,
+	const TOptions extends UnmappedOptions<TValue>,
+>(
+	store: ReturnType<typeof useStore>,
+	fieldValueAtom: StandardWritableAtom<TValue>,
+	options?: TOptions
+): UseFieldResult<TValue, Flags<TOptions>>;
+export function toInternalFieldAtom<
+	TValue,
+	TFieldValue,
+	const TOptions extends MappedOptions<TValue, TFieldValue>,
+>(
+	store: ReturnType<typeof useStore>,
+	fieldValueAtom: StandardWritableAtom<TValue>,
+	options: TOptions
+): UseFieldResult<TFieldValue, Flags<TOptions>>;
+export function toInternalFieldAtom<
+	TValue,
+	TFieldValue,
+	const TOptions extends MappedOptions<TValue, TFieldValue>,
+>(
+	store: ReturnType<typeof useStore>,
+	fieldValueAtom: StandardWritableAtom<TValue>,
+	options: TOptions
+): UseFieldResult<TFieldValue, Flags<TOptions>>;
 export function toInternalFieldAtom<TValue, TFieldValue>(
 	store: ReturnType<typeof useStore>,
 	fieldValueAtom: StandardWritableAtom<TValue>,
-	options: Partial<FieldOptions<TValue, TFieldValue>> = {}
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-): UseFieldResult<TFieldValue, any> {
+	options: Partial<FieldOptions<TValue, TFieldValue>>
+): UseFieldResult<TFieldValue>;
+export function toInternalFieldAtom<TValue, TFieldValue>(
+	store: ReturnType<typeof useStore>,
+	fieldValueAtom: StandardWritableAtom<TValue>,
+	options: Partial<FieldOptions<TValue, TFieldValue>>
+): UseFieldResult<TFieldValue> {
 	const fieldEvents = new FieldEvents(options.formEvents);
 	const mapping: FieldMapping<TValue, TFieldValue> =
 		('mapping' in options ? options.mapping : undefined) ??
@@ -91,12 +126,22 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 		store.set(formValueAtom, v);
 	};
 
+	type MappedUseFieldResult<T> = UseFieldResult<T>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	type AnyUseFieldResult = MappedUseFieldResult<any>;
+	const mappings: WeakMap<
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		FieldMapping<TFieldValue, any>,
+		AnyUseFieldResult
+	> = new WeakMap();
+
 	return {
 		value: formValueAtom,
 		disabled,
 		readOnly,
 		setValue,
 		getValue: () => store.get(formValueAtom),
+		schema,
 		errors,
 		translation: options.translation,
 		onChange(v: TFieldValue | ((prev: TFieldValue) => TFieldValue)) {
@@ -107,27 +152,36 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 			fieldEvents.dispatchEvent(FieldEvents.Blur);
 		},
 		htmlProps: buildHtmlProps(),
-		applyMapping: <TNew>(
-			newMapping: FieldMapping<TFieldValue, TNew>
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		): UseFieldResult<TNew, any> => {
-			const newOptions: Partial<FieldOptions<TValue, TNew>> = {
-				...options,
-				disabled: deepDisabled,
-				readOnly: deepReadOnly,
-				mapping: {
-					toForm: (v) => newMapping.toForm(mapping.toForm(v)),
-					fromForm: (v) => {
-						const newResult = newMapping.fromForm(v);
-						return newResult === noChange
-							? noChange
-							: mapping.fromForm(newResult);
-					},
-				},
-			};
-			return toInternalFieldAtom(store, fieldValueAtom, newOptions);
-		},
+		applyMapping,
 	} as UseFieldResult<TFieldValue>;
+
+	function applyMapping<TNew>(
+		newMapping: FieldMapping<TFieldValue, TNew>
+	): MappedUseFieldResult<TNew>;
+	function applyMapping<TNew>(
+		newMapping: FieldMapping<TFieldValue, TNew>
+	): AnyUseFieldResult {
+		const preexisting = mappings.get(newMapping);
+		if (preexisting) return preexisting;
+
+		const newOptions = {
+			...options,
+			disabled: deepDisabled,
+			readOnly: deepReadOnly,
+			mapping: {
+				toForm: (v) => newMapping.toForm(mapping.toForm(v)),
+				fromForm: (v) => {
+					const newResult = newMapping.fromForm(v);
+					return newResult === noChange
+						? noChange
+						: mapping.fromForm(newResult);
+				},
+			},
+		} satisfies Partial<FieldOptions<TValue, TNew>>;
+		const result = toInternalFieldAtom(store, fieldValueAtom, newOptions);
+		mappings.set(newMapping, result);
+		return result;
+	}
 
 	function createErrorStrategyAtom(
 		schema: ZodType<TValue>,
