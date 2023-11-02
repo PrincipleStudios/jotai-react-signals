@@ -2,26 +2,8 @@ import { UseUpdatableFieldResult, useField } from './useField';
 import { renderHook, act, render, fireEvent } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import JotaiInput from '@principlestudios/react-jotai-form-components/input';
-import type { FieldMapping } from './types';
-import { noChange } from './constants';
-
-const capitalizeMapping: FieldMapping<string, string> = {
-	toForm(v) {
-		return v.toUpperCase();
-	},
-	fromForm(v) {
-		return v;
-	},
-};
-const integerMapping: FieldMapping<number, string> = {
-	toForm(v) {
-		return v.toFixed(0);
-	},
-	fromForm(v) {
-		const result = parseInt(v, 10);
-		return isNaN(result) ? noChange : result;
-	},
-};
+import { capitalizeMapping } from './test/capitalizeMapping';
+import { integerMapping } from './test/integerMapping';
 
 describe('useField', () => {
 	describe('with a basic number construction', () => {

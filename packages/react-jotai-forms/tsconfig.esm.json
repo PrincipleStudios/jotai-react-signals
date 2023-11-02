@@ -1,11 +1,11 @@
 {
 	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
-		"moduleResolution": "node10",
-		"module": "commonjs",
 		"outDir": "dist",
 		"target": "es5",
-		"declaration": true
+		"composite": false,
+		"declarationMap": false,
+		"declaration": false
 	},
 	"exclude": ["**/*.test.*", "**/test/**/*"]
 }

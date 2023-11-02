@@ -27,25 +27,8 @@ function getEsbuild(target, env = 'development') {
 	return esbuild({
 		minify: env === 'production',
 		target,
-		tsconfig: path.resolve('./tsconfig.json'),
+		tsconfig: path.resolve('./tsconfig.esm.json'),
 	});
-}
-
-function createDeclarationConfig(input, output) {
-	return {
-		input,
-		output: {
-			dir: output,
-		},
-		external,
-		plugins: [
-			typescript({
-				declaration: true,
-				emitDeclarationOnly: true,
-				outDir: output,
-			}),
-		],
-	};
 }
 
 function createESMConfig(input, output) {
@@ -110,7 +93,6 @@ function createSystemConfig(input, output, env) {
 }
 
 module.exports = {
-	createDeclarationConfig,
 	createCommonJSConfig,
 	createESMConfig,
 	createSystemConfig,

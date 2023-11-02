@@ -1,0 +1,59 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"compilerOptions": {
+		"allowJs": true,
+		"allowSyntheticDefaultImports": false,
+		"declaration": true,
+		"esModuleInterop": true,
+		"inlineSourceMap": false,
+		"jsx": "react-jsx",
+		"lib": [
+			"dom",
+			"esnext"
+		],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"noFallthroughCasesInSwitch": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"types": [
+			"node",
+			"jest"
+		],
+		"target": "ESNext",
+		"composite": true,
+		"declarationMap": true,
+		"forceConsistentCasingInFileNames": true,
+		"inlineSources": false,
+		"isolatedModules": true,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"preserveWatchOutput": true,
+		"preserveSymlinks": false,
+		"sourceMap": true
+	},
+	"compileOnSave": false,
+	"exclude": [
+		"node_modules",
+		"**/*/dist",
+		"packages/**/*"
+	],
+	"references": [
+		{
+			"path": "./packages/jotai-animation-atom"
+		},
+		{
+			"path": "./packages/jotai-react-signals"
+		},
+		{
+			"path": "./packages/jotai-utilities"
+		},
+		{
+			"path": "./packages/react-jotai-form-components"
+		},
+		{
+			"path": "./packages/react-jotai-forms"
+		}
+	]
+}

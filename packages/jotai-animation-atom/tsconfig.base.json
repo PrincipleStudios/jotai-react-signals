@@ -1,7 +1,7 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"extends": "../../tsconfig.json",
-	"display": "Jotai Signals Base",
+	"display": "Jotai Animation Atom Base",
 	"compilerOptions": {
 		"outDir": "dist",
 		"rootDir": "src"

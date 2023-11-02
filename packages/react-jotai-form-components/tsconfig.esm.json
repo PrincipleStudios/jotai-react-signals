@@ -1,9 +1,11 @@
 {
-    "extends": "./tsconfig.base.json",
-    "compilerOptions": {
-      "declaration": false,
-      "target": "es6",
-      "outDir": "./dist/esm"
-    },
-    "exclude": ["**/*.test.*","src/test/**/*"]
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "dist/esm",
+		"target": "es5",
+		"composite": false,
+		"declarationMap": false,
+		"declaration": false
+	},
+	"exclude": ["**/*.test.*", "**/test/**/*"]
 }

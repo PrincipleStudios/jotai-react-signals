@@ -33,7 +33,8 @@
 	},
 	"scripts": {
 		"prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
-		"build": "rollup -c",
+		"build": "npm run build:dts && rollup -c",
+		"build:dts": "tsc --build --force tsconfig.dts.json",
 		"postbuild": "pwsh ./scripts/post-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
 		"test": "jest",
 		"test:watch": "jest --watch",

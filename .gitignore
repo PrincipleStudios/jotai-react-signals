@@ -3,3 +3,5 @@ packages/*/dist
 packages/*/*.tgz
 artifacts/
 .vs/
+**/*.tsbuildinfo
+**/.rollup.cache

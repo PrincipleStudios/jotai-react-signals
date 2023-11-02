@@ -5,16 +5,18 @@ import type {
 } from './StandardWritableAtom';
 import type { AnyPath, Path, PathValue } from '../path';
 import type { Patch, Objectish } from 'immer';
-import { applyPatches, produceWithPatches } from 'immer';
+import { applyPatches, produceWithPatches, enablePatches } from 'immer';
+
+enablePatches();
 
 export function getValueAtPath<T, TPath extends Path<T>>(
-	steps: TPath,
+	steps: TPath
 ): (input: T) => PathValue<T, TPath> {
 	return (input: T): PathValue<T, TPath> => {
 		try {
 			return (steps as ReadonlyArray<string | number>).reduce(
 				(prev, next) => (prev as never)[next],
-				input as unknown,
+				input as unknown
 			) as PathValue<T, TPath>;
 		} catch (ex) {
 			console.warn({ input, steps });
@@ -25,7 +27,7 @@ export function getValueAtPath<T, TPath extends Path<T>>(
 
 export function getAtomForPath<T, TPath extends Path<T>>(
 	steps: TPath,
-	source: StandardWritableAtom<T>,
+	source: StandardWritableAtom<T>
 ) {
 	type TOut = PathValue<T, TPath>;
 
@@ -44,19 +46,19 @@ export function getAtomForPath<T, TPath extends Path<T>>(
 								{ val: getPathValue(prev) },
 								(d) => {
 									d.val = (effect as SetStateAction<TOut>)(
-										d.val as TOut,
+										d.val as TOut
 									) as never;
-								},
+								}
 						  )[1]
 						: [{ op: 'replace', path: [], value: effect }];
 				const finalPatches = patches.map(
 					(patch): Patch => ({
 						...patch,
 						path: [...(steps as AnyPath), ...patch.path.slice(1)],
-					}),
+					})
 				);
 				return applyPatches(prev as Objectish, finalPatches) as T;
-			}),
+			})
 	);
 	resultAtom.debugLabel = (steps as AnyPath).join('/') + `#${Math.random()}`;
 	return resultAtom;

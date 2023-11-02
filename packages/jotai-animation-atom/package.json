@@ -33,7 +33,8 @@
 	},
 	"scripts": {
 		"prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
-		"build": "rollup -c",
+		"build": "npm run build:dts && rollup -c",
+		"build:dts": "tsc --build --force tsconfig.dts.json",
 		"test": "jest",
 		"lint": "npm run typecheck && npm run eslint && npm run prettier",
 		"lint:pre-commit": "npx lint-staged",

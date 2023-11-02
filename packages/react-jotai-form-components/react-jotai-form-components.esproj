@@ -6,7 +6,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<CompileOutputs Remove="dist/index.js" />
+		<CompileOutputs Remove="dist/**/*" />
 		<Source Include="src/*.ts" />
 		<Source Include="src/*.tsx" />
 		<Source Remove="src/*.test.*" />

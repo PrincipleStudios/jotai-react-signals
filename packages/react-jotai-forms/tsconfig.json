@@ -1,8 +1,7 @@
 {
-    "extends": "./tsconfig-base.json",
-    "compilerOptions": {
-        "module": "NodeNext",
-        "outDir": "dist/mjs",
-        "target": "esnext"
-    }
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "dist/mjs",
+		"target": "esnext"
+	}
 }

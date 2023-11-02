@@ -10,5 +10,5 @@ export {
 	type CSSPropertiesWithSignal,
 	type WithSignalComponent,
 	type WithSignalProps,
-	withSignal
+	withSignal,
 } from './internals/withSignal';

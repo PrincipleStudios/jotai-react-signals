@@ -1,5 +1,4 @@
 const {
-	createDeclarationConfig,
 	createCommonJSConfig,
 	createESMConfig,
 	createSystemConfig,
@@ -7,7 +6,6 @@ const {
 
 module.exports = function (args) {
 	return [
-		createDeclarationConfig(`src/index.ts`, 'dist'),
 		createCommonJSConfig(`src/index.ts`, `dist/index`),
 		createESMConfig(`src/index.ts`, `dist/mjs/index.mjs`),
 		createSystemConfig(`src/index.ts`, `dist/system/index`, 'development'),
