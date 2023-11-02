@@ -128,7 +128,7 @@ importers:
   packages/jotai-react-signals:
     dependencies:
       '@principlestudios/jotai-utilities':
-        specifier: ^0.4.0
+        specifier: ^0.5.0
         version: link:../jotai-utilities
       jotai:
         specifier: ^2.5.0
@@ -185,7 +185,7 @@ importers:
         specifier: workspace:^
         version: link:../jotai-react-signals
       '@principlestudios/jotai-utilities':
-        specifier: ^0.4.0
+        specifier: ^0.5.0
         version: link:../jotai-utilities
       jotai:
         specifier: ^2.5.0
