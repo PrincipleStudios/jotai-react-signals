@@ -11,7 +11,7 @@
 		<Source Include="src/*.tsx" />
 		<Source Remove="src/*.test.*" />
 		<CompileOutputs Include="@(Source->'dist/%(filename).js')" />
-		<CompileOutputs Include="@(Source->'dist/esm/%(filename).js')" />
+		<CompileOutputs Include="@(Source->'dist/mjs/%(filename).js')" />
 		<CompileOutputs Include="@(Source->'dist/%(filename).d.ts')" />
 	</ItemGroup>
 </Project>

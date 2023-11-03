@@ -147,7 +147,7 @@ importers:
   packages/jotai-utilities:
     dependencies:
       jotai:
-        specifier: ^2.5.0
+        specifier: '>=2.0.0'
         version: 2.5.0(@types/react@18.0.28)(react@18.2.0)
     devDependencies:
       '@principlestudios/eslint-config':
@@ -163,10 +163,10 @@ importers:
   packages/react-jotai-form-components:
     dependencies:
       '@principlestudios/jotai-react-signals':
-        specifier: link:..\jotai-react-signals
+        specifier: ^0.5.0
         version: link:../jotai-react-signals
       jotai:
-        specifier: ^2.5.0
+        specifier: '>=2.0.0'
         version: 2.5.0(@types/react@18.0.28)(react@18.2.0)
     devDependencies:
       '@principlestudios/eslint-config':

@@ -29,6 +29,7 @@
 		<CompileOutputs Include="dist/index.d.ts" />
 
         <PnpmPackagedFiles Condition=" '$(PnpmPackagedFiles)' == '' " Include="@(CompileConfig)" />
+        <PnpmPackagedFiles Include=".npmignore" />
 
         <PackageReference Include="JsonPeek" Version="1.2.0" PrivateAssets="All" />
         <PackageReference Include="PrincipleStudios.MsBuild.Mutex" Version="0.1.0" PrivateAssets="All" />
@@ -90,7 +91,7 @@
         </PropertyGroup>
     </Target>
 
-    <Target Name="PnpmPack" BeforeTargets="Publish" DependsOnTargets="NodeBuild" Inputs="@(PnpmPackagedFiles)" Outputs="$(PackageOutputPath)$(NpmPackageNormalizedName)-$(NpmPackageVersion).tgz">
+    <Target Name="PnpmPack" BeforeTargets="Publish" DependsOnTargets="NodeBuild" Inputs="@(RestoreConfig);@(PnpmPackagedFiles);@(CompileOutputs)" Outputs="$(PackageOutputPath)$(NpmPackageNormalizedName)-$(NpmPackageVersion).tgz">
         <MakeDir Directories="$(PackageOutputPath)"/>
         <Exec WorkingDirectory="$(ProjectDir)" Command="pnpm pack" />
         <Move SourceFiles="$(NpmPackageNormalizedName)-$(NpmPackageVersion).tgz" DestinationFolder="$(PackageOutputPath)" />

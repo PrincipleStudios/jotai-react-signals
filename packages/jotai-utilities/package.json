@@ -53,8 +53,5 @@
 		"@principlestudios/eslint-config": "^0.0.1",
 		"@principlestudios/shared": "^0.0.1",
 		"glob-promise": "^6.0.5"
-	},
-	"dependencies": {
-		"jotai": "^2.5.0"
 	}
 }

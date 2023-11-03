@@ -6,3 +6,5 @@
 tsconfig*.json
 *.tgz
 /*.config.*js
+/*.tsbuildinfo
+/*.esproj

@@ -45,8 +45,7 @@
 	"author": "Matt DeKrey",
 	"license": "MIT",
 	"dependencies": {
-		"@principlestudios/jotai-react-signals": "link:..\\jotai-react-signals",
-		"jotai": "^2.5.0"
+		"@principlestudios/jotai-react-signals": "^0.5.0"
 	},
 	"peerDependencies": {
 		"jotai": ">=2.0.0"
