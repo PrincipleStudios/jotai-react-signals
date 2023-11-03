@@ -39,7 +39,7 @@ export type FormFieldStateCallback<
 	TDerivedValue,
 > = (
 	context: FormFieldStateContext<TFormValue, TOriginalValue, TDerivedValue>,
-	getter: Getter,
+	getter: Getter
 ) => Atom<T>;
 
 export type FormFieldStateContextAtom<
@@ -49,7 +49,7 @@ export type FormFieldStateContextAtom<
 	TDerivedValue,
 > = (
 	context: FormFieldStateContext<TFormValue, TOriginalValue, TDerivedValue>,
-	getter: Getter,
+	getter: Getter
 ) => T;
 
 export type FieldStateOverride<
@@ -184,13 +184,13 @@ export type FieldsConfig<T> = {
 };
 
 export function toConfigObject<T, TField extends BaseAnyFieldConfig<T>>(
-	config: TField,
+	config: TField
 ): InferredFieldConfigObject<T, TField>;
 export function toConfigObject<T>(
-	config: BaseAnyFieldConfig<T>,
+	config: BaseAnyFieldConfig<T>
 ): AnyFieldConfig<T>;
 export function toConfigObject<T>(
-	config: BaseAnyFieldConfig<T>,
+	config: BaseAnyFieldConfig<T>
 ): AnyFieldConfig<T> {
 	if (isArray(config)) {
 		return {

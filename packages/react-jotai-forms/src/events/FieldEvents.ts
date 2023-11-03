@@ -12,13 +12,13 @@ export interface IFieldEvents {
 	addEventListener(
 		event: FieldEventNames,
 		eventListener: EventListenerOrEventListenerObject,
-		options?: AddEventListenerOptions | boolean,
+		options?: AddEventListenerOptions | boolean
 	): void;
 
 	removeEventListener(
 		event: FieldEventNames,
 		eventListener: EventListenerOrEventListenerObject,
-		options?: AddEventListenerOptions | boolean,
+		options?: AddEventListenerOptions | boolean
 	): void;
 
 	dispatchEvent(event: FieldEventNames): void;
@@ -34,7 +34,7 @@ export class FieldEvents implements IFieldEvents {
 	addEventListener(
 		event: FieldEventNames,
 		eventListener: EventListenerOrEventListenerObject,
-		options?: AddEventListenerOptions | boolean,
+		options?: AddEventListenerOptions | boolean
 	) {
 		this.target.addEventListener(event, eventListener, options);
 	}
@@ -42,7 +42,7 @@ export class FieldEvents implements IFieldEvents {
 	removeEventListener(
 		event: FieldEventNames,
 		eventListener: EventListenerOrEventListenerObject,
-		options?: AddEventListenerOptions | boolean,
+		options?: AddEventListenerOptions | boolean
 	) {
 		this.target.removeEventListener(event, eventListener, options);
 	}

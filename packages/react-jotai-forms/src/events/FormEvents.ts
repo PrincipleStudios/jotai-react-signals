@@ -20,7 +20,7 @@ export class FormEvents implements IFieldEvents {
 	addEventListener(
 		event: FormEventNames,
 		eventListener: EventListenerOrEventListenerObject,
-		options?: AddEventListenerOptions | boolean,
+		options?: AddEventListenerOptions | boolean
 	) {
 		this.target.addEventListener(event, eventListener, options);
 	}
@@ -28,7 +28,7 @@ export class FormEvents implements IFieldEvents {
 	removeEventListener(
 		event: FormEventNames,
 		eventListener: EventListenerOrEventListenerObject,
-		options?: AddEventListenerOptions | boolean,
+		options?: AddEventListenerOptions | boolean
 	) {
 		this.target.removeEventListener(event, eventListener, options);
 	}

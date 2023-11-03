@@ -9,7 +9,7 @@ export const noChange = Symbol('field-mapping-no-change');
 export function mapAtom<TIn, TOut>(
 	target: StandardWritableAtom<TIn>,
 	toOut: (v: TIn) => TOut,
-	fromOut: (v: TOut) => TIn | typeof noChange,
+	fromOut: (v: TOut) => TIn | typeof noChange
 ): StandardWritableAtom<TOut> {
 	return atom(
 		(get) => toOut(get(target)),
@@ -18,9 +18,9 @@ export function mapAtom<TIn, TOut>(
 				const result = fromOut(
 					typeof effect === 'function'
 						? (effect as SetStateAction<TOut>)(toOut(prev))
-						: effect,
+						: effect
 				);
 				return result === noChange ? prev : result;
-			}),
+			})
 	);
 }

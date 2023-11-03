@@ -12,12 +12,12 @@ export type ErrorsStrategy =
 export type RegisterErrorStrategy = (
 	this: void,
 	fieldEvents: IFieldEvents,
-	callback: EventListenerOrEventListenerObject,
+	callback: EventListenerOrEventListenerObject
 ) => void;
 export function errorsStrategy(
 	preSubmit: ErrorsStrategy,
 	postSubmit: ErrorsStrategy,
-	formEvents: FormEvents,
+	formEvents: FormEvents
 ): RegisterErrorStrategy {
 	let hasSubmitted = false;
 	formEvents.addEventListener(FormEvents.Submit, () => (hasSubmitted = true));
@@ -45,11 +45,11 @@ export function errorsStrategy(
 type ApplyStrategy = (
 	formEvents: FormEvents,
 	fieldEvents: IFieldEvents,
-	callback: EventListenerOrEventListenerObject,
+	callback: EventListenerOrEventListenerObject
 ) => void;
 
 function getErrorStrategy(
-	strategy: ErrorsStrategy,
+	strategy: ErrorsStrategy
 ): [register: ApplyStrategy, unregister: ApplyStrategy] {
 	switch (strategy) {
 		case 'onChange':

@@ -23,7 +23,7 @@ export type FieldStateAtom<T extends FieldStatePrimitive> =
 	NoInitialWritableAtom<PerFieldState<T>>;
 
 export function toWritableAtom<T extends FieldStatePrimitive>(
-	value: PerFieldState<T> | Atom<PerFieldState<T>>,
+	value: PerFieldState<T> | Atom<PerFieldState<T>>
 ): FieldStateAtom<T> {
 	const fieldState = atom(value);
 	if (!isAtom(value)) return toAtomFieldState(value);
@@ -37,15 +37,15 @@ export function toWritableAtom<T extends FieldStatePrimitive>(
 			temp = isAtom(temp) ? get(temp) : temp;
 			set(
 				fieldState,
-				typeof action === 'function' ? action(temp) : () => action,
+				typeof action === 'function' ? action(temp) : () => action
 			);
-		},
+		}
 	);
 }
 
 export function walkFieldState<T extends FieldStatePrimitive>(
 	fieldState: PerFieldState<T>,
-	path: AnyPath,
+	path: AnyPath
 ): PerFieldState<T> {
 	if (
 		typeof fieldState === 'object' &&
@@ -54,14 +54,14 @@ export function walkFieldState<T extends FieldStatePrimitive>(
 	) {
 		return walkFieldState(
 			fieldState[path[0]] ?? fieldState[defaultField],
-			path.slice(1),
+			path.slice(1)
 		);
 	}
 	return fieldState;
 }
 
 function ensureValue<T extends FieldStatePrimitive>(
-	fieldState: PerFieldState<T>,
+	fieldState: PerFieldState<T>
 ): T {
 	if (typeof fieldState === 'object' && defaultField in fieldState)
 		return ensureValue(fieldState[defaultField]);
@@ -69,7 +69,7 @@ function ensureValue<T extends FieldStatePrimitive>(
 }
 
 export function toAtomFieldState<T extends FieldStatePrimitive>(
-	initial: PerFieldState<T>,
+	initial: PerFieldState<T>
 ): FieldStateAtom<T> {
 	const rawAtom: FieldStateAtom<T> = atom(initial);
 	return rawAtom;
@@ -78,7 +78,7 @@ export function toAtomFieldState<T extends FieldStatePrimitive>(
 function updateFieldState<T extends FieldStatePrimitive>(
 	fieldState: undefined | PerFieldState<T>,
 	path: AnyPath,
-	alteration: SetStateNoInitialAction<PerFieldState<T>>,
+	alteration: SetStateNoInitialAction<PerFieldState<T>>
 ): PerFieldState<T> {
 	if (path.length === 0) return alteration(fieldState as PerFieldState<T>);
 	if (typeof fieldState === 'object') {
@@ -101,7 +101,7 @@ function updateFieldState<T extends FieldStatePrimitive>(
 
 export function walkFieldStateAtom<T extends FieldStatePrimitive>(
 	fieldState: FieldStateAtom<T>,
-	path: AnyPath,
+	path: AnyPath
 ): FieldStateAtom<T> {
 	return atom(
 		(get) => walkFieldState(get(fieldState), path),
@@ -112,16 +112,16 @@ export function walkFieldStateAtom<T extends FieldStatePrimitive>(
 					return updateFieldState(
 						prev as PerFieldState<T>,
 						path,
-						typeof action === 'function' ? action : () => action,
+						typeof action === 'function' ? action : () => action
 					);
-				}),
+				})
 			);
-		},
+		}
 	);
 }
 
 export function toFieldStateValue<T extends FieldStatePrimitive>(
-	fieldState: FieldStateAtom<T>,
+	fieldState: FieldStateAtom<T>
 ): NoInitialWritableAtom<T> {
 	return atom(
 		(get) => ensureValue(get(fieldState)),
@@ -130,10 +130,10 @@ export function toFieldStateValue<T extends FieldStatePrimitive>(
 				fieldState,
 				produce<PerFieldState<T>>((prev) => {
 					return (typeof action === 'function' ? action : () => action)(
-						prev as T,
+						prev as T
 					);
-				}),
+				})
 			);
-		},
+		}
 	);
 }

@@ -18,10 +18,10 @@ import {
 
 export function useForm<T>(options: FormOptions<T>): UseFormResult<T>;
 export function useForm<T, const TFields extends FieldsConfig<T>>(
-	options: FormOptions<T> & FormFieldsOptions<T, TFields>,
+	options: FormOptions<T> & FormFieldsOptions<T, TFields>
 ): UseFormResultWithFields<T, TFields>;
 export function useForm<T>(
-	options: FormOptions<T> & Partial<FormFieldsOptions<T, FieldsConfig<T>>>,
+	options: FormOptions<T> & Partial<FormFieldsOptions<T, FieldsConfig<T>>>
 ): UseFormResult<T> | UseFormResultWithFields<T, FieldsConfig<T>> {
 	const store = useStore();
 	return useConstant(
@@ -30,7 +30,7 @@ export function useForm<T>(
 			const strategy = errorsStrategy(
 				options.preSubmit ?? 'onSubmit',
 				options.postSubmit ?? 'onBlur',
-				formEvents,
+				formEvents
 			);
 			const formAtom = atom(options.defaultValue);
 			const atomFamily = createPathAtomFamily(formAtom);
@@ -67,6 +67,6 @@ export function useForm<T>(
 				...result,
 				fields,
 			};
-		},
+		}
 	);
 }

@@ -8,20 +8,20 @@ type MaybeErrors = ZodError | null;
 
 export function createErrorsAtom<T>(
 	target: Atom<T>,
-	schema: ZodType<T>,
+	schema: ZodType<T>
 ): Atom<Loadable<MaybeErrors>> {
 	return loadable(
 		atom(async (get) => {
 			const parseResult = await schema.safeParseAsync(get(target));
 			if (parseResult.success) return null;
 			return parseResult.error;
-		}),
+		})
 	);
 }
 
 export function createTriggeredErrorsAtom<T>(
 	target: Atom<T>,
-	schema: ZodType<T>,
+	schema: ZodType<T>
 ): [Atom<Loadable<MaybeErrors>>, WritableAtom<void, [], void>] {
 	const errors = atom<Promise<MaybeErrors>>(Promise.resolve(null));
 
@@ -33,7 +33,7 @@ export function createTriggeredErrorsAtom<T>(
 				const parseResult = await schema.safeParseAsync(value);
 				if (parseResult.success) return null;
 				return parseResult.error;
-			})(),
+			})()
 		);
 	});
 

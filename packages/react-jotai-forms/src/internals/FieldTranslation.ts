@@ -5,5 +5,5 @@ export type FieldTranslatablePart =
 	| string;
 export type FieldTranslation = (
 	this: void,
-	part: FieldTranslatablePart,
+	part: FieldTranslatablePart
 ) => string;

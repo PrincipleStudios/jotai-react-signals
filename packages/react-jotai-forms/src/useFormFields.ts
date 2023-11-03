@@ -19,7 +19,7 @@ export function useFormFields<
 	const TFields extends FieldsConfig<T>,
 >(
 	form: UseFormResult<T>,
-	fields: TFields,
+	fields: TFields
 ): UseFieldsResult<T, TFields>['fields'] {
 	return useConstant(() => buildFormFields<T, TFields>(fields, form));
 }
@@ -31,7 +31,7 @@ export function useFormField<
 	TValue,
 >(
 	form: UseFormResult<T>,
-	field: FieldConfig<T, TPath, TValue>,
+	field: FieldConfig<T, TPath, TValue>
 ): FormFieldReturnTypeFromConfig<
 	T,
 	BaseAnyFieldConfig<T> & FieldConfig<T, TPath, TValue>
@@ -41,7 +41,7 @@ export function useFormField<
 	const TField extends BaseAnyFieldConfig<T>,
 >(
 	form: UseFormResult<T>,
-	field: TField & InferredFieldConfig<T, TField>,
+	field: TField & InferredFieldConfig<T, TField>
 ): FormFieldReturnTypeFromConfig<T, TField> {
 	return useConstant(() => buildFormField<T, TField>(field, form));
 }

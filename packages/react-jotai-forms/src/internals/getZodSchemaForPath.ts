@@ -10,25 +10,25 @@ import type { AnyPath, Path, PathValue } from '../path';
 
 export function getZodSchemaForPath<T, TPath extends Path<T>>(
 	steps: TPath,
-	schema: ZodType<T>,
+	schema: ZodType<T>
 ): ZodType<PathValue<T, TPath>>;
 export function getZodSchemaForPath(
 	steps: AnyPath,
-	schema: ZodTypeAny,
+	schema: ZodTypeAny
 ): ZodTypeAny;
 export function getZodSchemaForPath(
 	steps: AnyPath,
-	schema: ZodTypeAny,
+	schema: ZodTypeAny
 ): ZodTypeAny {
 	return (steps as ReadonlyArray<string | number>).reduce(
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		(prev, next) => doStep(next, prev),
-		schema,
+		schema
 	);
 
 	function doStep(
 		step: string | number,
-		current: ZodTypeAny | ZodUnion<ZodUnionOptions>,
+		current: ZodTypeAny | ZodUnion<ZodUnionOptions>
 	): ZodTypeAny {
 		if ('shape' in current) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -41,8 +41,8 @@ export function getZodSchemaForPath(
 				step,
 				current.options.filter(
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					<T>(n: ZodNull | T): n is T => !(n instanceof ZodNull),
-				)[0],
+					<T>(n: ZodNull | T): n is T => !(n instanceof ZodNull)
+				)[0]
 			);
 		} else if ('innerType' in (current as ZodOptional<ZodTypeAny>)._def) {
 			return doStep(step, (current as ZodOptional<ZodTypeAny>)._def.innerType);
