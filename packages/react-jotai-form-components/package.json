@@ -1,0 +1,58 @@
+{
+	"name": "@principlestudios/react-jotai-form-components",
+	"version": "0.1.0",
+	"description": "👻 Form components for use with @principlestudios/react-jotai-form",
+	"private": false,
+	"bugs": {
+		"url": "https://github.com/principlestudios/jotai-react-signals/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/principlestudios/jotai-react-signals.git"
+	},
+	"exports": {
+		"./*": {
+			"types": "./dist/*.d.ts",
+			"import": {
+				"types": "./dist/*.d.ts",
+				"default": "./dist/mjs/*.js"
+			},
+			"require": "./dist/*.js",
+			"default": "./dist/*.js"
+		}
+	},
+	"scripts": {
+		"build": "npm run build:cjs && npm run build:esm",
+		"build:cjs": "tsc --build --force tsconfig.cjs.json",
+		"build:esm": "tsc --build --force tsconfig.esm.json",
+		"test": "jest",
+		"lint": "npm run typecheck && npm run eslint && npm run prettier",
+		"lint:pre-commit": "npx lint-staged",
+		"lint:fix": "npm run typecheck && npm run eslint:fix && npm run prettier:fix",
+		"eslint": "eslint \"src/**/*.{js,ts,tsx}\"",
+		"eslint:fix": "eslint \"src/**/*.{js,ts,tsx}\" --fix",
+		"prettier": "prettier --list-different \"src/**/*.{js,ts,tsx}\"",
+		"prettier:fix": "prettier --write \"src/**/*.{js,ts,tsx}\"",
+		"typecheck": "tsc --noemit"
+	},
+	"keywords": [
+		"react",
+		"state",
+		"jotai",
+		"store",
+		"signals"
+	],
+	"author": "Matt DeKrey",
+	"license": "MIT",
+	"dependencies": {
+		"@principlestudios/jotai-react-signals": "^0.5.0"
+	},
+	"peerDependencies": {
+		"jotai": ">=2.0.0"
+	},
+	"devDependencies": {
+		"@principlestudios/eslint-config": "^0.0.1",
+		"@principlestudios/shared": "^0.0.1",
+		"glob-promise": "^6.0.5"
+	}
+}

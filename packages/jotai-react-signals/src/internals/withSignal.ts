@@ -24,7 +24,7 @@ function difference<T>(arr1: T[], arr2: T[]) {
 	return arr1.filter((x) => !arr2.includes(x));
 }
 
-type CSSPropertiesWithSignal = {
+export type CSSPropertiesWithSignal = {
 	[K in keyof CSSProperties | `--${string}`]?: K extends `--${string}`
 		? string | number | Atom<string | null>
 		: K extends keyof CSSProperties
@@ -36,7 +36,7 @@ type MergeMappingProp<TRaw, TAtom> =
 	| (TRaw extends never ? never : TRaw)
 	| Exclude<Atom<TAtom>, Atom<never>>;
 
-type WithSignalProps<
+export type WithSignalProps<
 	T extends AnyIntrinsicElement,
 	TMapping extends Mapping,
 > = {
@@ -49,6 +49,15 @@ type WithSignalProps<
 	[K in Exclude<keyof TMapping, keyof T>]?: Atom<TMapping[K]>;
 };
 
+export type WithSignalComponent<
+	T extends AnyIntrinsicElementTag,
+	TMapping extends Mapping,
+> = React.MemoExoticComponent<
+	React.ForwardRefExoticComponent<
+		React.PropsWithoutRef<WithSignalProps<JSX.IntrinsicElements[T], TMapping>> &
+			React.RefAttributes<RefType<T>>
+	>
+>;
 function toPropsObj<
 	T extends { style?: CSSProperties },
 	TMapping extends Mapping,
@@ -167,12 +176,7 @@ export function withSignal<
 >(
 	elem: T,
 	map: CompleteMapping<RefType<T> & Element, TMapping>
-): React.MemoExoticComponent<
-	React.ForwardRefExoticComponent<
-		React.PropsWithoutRef<WithSignalProps<JSX.IntrinsicElements[T], TMapping>> &
-			React.RefAttributes<RefType<T>>
-	>
->;
+): WithSignalComponent<T, TMapping>;
 export function withSignal<
 	T extends AnyIntrinsicElementTag,
 	TMapping extends Mapping,
@@ -182,12 +186,7 @@ export function withSignal<
 		RefType<T> & Element,
 		TMapping
 	>
-): React.MemoExoticComponent<
-	React.ForwardRefExoticComponent<
-		React.PropsWithoutRef<WithSignalProps<JSX.IntrinsicElements[T], TMapping>> &
-			React.RefAttributes<RefType<T>>
-	>
-> {
+): WithSignalComponent<T, TMapping> {
 	const result = memo(
 		forwardRef(function Signalled(
 			props: WithSignalProps<JSX.IntrinsicElements[T], TMapping>,

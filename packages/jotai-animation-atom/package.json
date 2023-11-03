@@ -15,27 +15,27 @@
 	},
 	"exports": {
 		".": {
-		"import": {
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/mjs/index.mjs"
+			},
 			"types": "./dist/index.d.ts",
-			"default": "./dist/mjs/index.mjs"
-		},
-		"types": "./dist/index.d.ts",
-		"default": "./dist/index.js"
+			"default": "./dist/index.js"
 		},
 		"./*": {
-		"types": "./dist/*.d.ts",
-		"import": {
 			"types": "./dist/*.d.ts",
-			"default": "./dist/mjs/*.mjs"
-		},
-		"default": "./dist/*.js"
+			"import": {
+				"types": "./dist/*.d.ts",
+				"default": "./dist/mjs/*.mjs"
+			},
+			"default": "./dist/*.js"
 		}
 	},
 	"scripts": {
 		"prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
-		"build": "rollup -c",
+		"build": "npm run build:dts && rollup -c",
+		"build:dts": "tsc --build --force tsconfig.dts.json",
 		"test": "jest",
-		"prepack": "npm run lint && npm run build",
 		"lint": "npm run typecheck && npm run eslint && npm run prettier",
 		"lint:pre-commit": "npx lint-staged",
 		"lint:fix": "npm run typecheck && npm run eslint:fix && npm run prettier:fix",
@@ -57,7 +57,10 @@
 		"jotai": ">=2.0.0"
 	},
 	"devDependencies": {
-		"@principlestudios/eslint-config": "*",
-		"@principlestudios/shared": "*"
+		"@principlestudios/eslint-config": "^0.0.1",
+		"@principlestudios/shared": "^0.0.1"
+	},
+	"dependencies": {
+		"jotai": "^2.5.0"
 	}
 }

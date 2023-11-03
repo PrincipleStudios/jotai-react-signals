@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "jotai-utilities", "packages\jotai-utilities\jotai-utilities.esproj", "{C76C19D8-A919-41B5-96FB-416993808F24}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "jotai-react-signals", "packages\jotai-react-signals\jotai-react-signals.esproj", "{27FAF283-ED69-470D-9A1C-B9C4DA27F9A3}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "jotai-animation-atom", "packages\jotai-animation-atom\jotai-animation-atom.esproj", "{D23311DB-5745-48EE-9F07-2E04CED3D4C2}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "react-jotai-forms", "packages\react-jotai-forms\react-jotai-forms.esproj", "{239EC360-227C-4D42-A2BA-E504F0B2C4E8}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "react-jotai-form-components", "packages\react-jotai-form-components\react-jotai-form-components.esproj", "{67DE029B-3912-4C4B-8EEA-B978CB9A482C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C76C19D8-A919-41B5-96FB-416993808F24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C76C19D8-A919-41B5-96FB-416993808F24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C76C19D8-A919-41B5-96FB-416993808F24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C76C19D8-A919-41B5-96FB-416993808F24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27FAF283-ED69-470D-9A1C-B9C4DA27F9A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27FAF283-ED69-470D-9A1C-B9C4DA27F9A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27FAF283-ED69-470D-9A1C-B9C4DA27F9A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27FAF283-ED69-470D-9A1C-B9C4DA27F9A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D23311DB-5745-48EE-9F07-2E04CED3D4C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D23311DB-5745-48EE-9F07-2E04CED3D4C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D23311DB-5745-48EE-9F07-2E04CED3D4C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D23311DB-5745-48EE-9F07-2E04CED3D4C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{239EC360-227C-4D42-A2BA-E504F0B2C4E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{239EC360-227C-4D42-A2BA-E504F0B2C4E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{239EC360-227C-4D42-A2BA-E504F0B2C4E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{239EC360-227C-4D42-A2BA-E504F0B2C4E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67DE029B-3912-4C4B-8EEA-B978CB9A482C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67DE029B-3912-4C4B-8EEA-B978CB9A482C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67DE029B-3912-4C4B-8EEA-B978CB9A482C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67DE029B-3912-4C4B-8EEA-B978CB9A482C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

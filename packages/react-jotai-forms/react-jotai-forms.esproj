@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+	<Import Project="$(RepositoryEngineeringDir)pnpm.targets" />
+
+	<ItemGroup>
+		<ProjectReference Include="../jotai-utilities/jotai-utilities.esproj" />
+		<ProjectReference Include="../react-jotai-form-components/react-jotai-form-components.esproj" />
+	</ItemGroup>
+</Project>

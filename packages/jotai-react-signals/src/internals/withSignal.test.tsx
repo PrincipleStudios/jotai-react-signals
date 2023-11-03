@@ -179,14 +179,14 @@ describe('withSignal', () => {
 			const { container } = render(<AnimatedA tabIndex={15} />);
 			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
 
-			expect(el.getAttribute('tabindex')).toBe('15');
+			expect(el.tabIndex).toBe(15);
 		});
 
 		it('initializes mapped property with value from signal', () => {
 			const { container } = render(<AnimatedA tabIndex={atomTabIndex} />);
 			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
 
-			expect(el.getAttribute('tabindex')).toBe('15');
+			expect(el.tabIndex).toBe(15);
 		});
 
 		it('updates mapped property with value from signal', () => {
@@ -195,7 +195,87 @@ describe('withSignal', () => {
 
 			store.set(atomTabIndex, 30);
 
-			expect(el.getAttribute('tabindex')).toBe('30');
+			expect(el.tabIndex).toBe(30);
+		});
+	});
+
+	describe('with value via property on an input element', () => {
+		const SignalledInput = withSignal('input', {
+			value: mapProperty('value'),
+		});
+		const store = getDefaultStore();
+		const atomValue = atom('foo');
+		function noop() {
+			// avoids console logs about having no onChange event
+			// noop is short for "no operation"
+		}
+
+		beforeEach(() => {
+			store.set(atomValue, 'foo');
+		});
+
+		it('assigns props normally', () => {
+			const { container } = render(
+				<SignalledInput value={'15'} onChange={noop} />
+			);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			expect(el.value).toBe('15');
+		});
+
+		it('initializes mapped property with value from signal', () => {
+			const { container } = render(
+				<SignalledInput value={atomValue} onChange={noop} />
+			);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			expect(el.value).toBe('foo');
+		});
+
+		it('updates mapped property with value from signal', () => {
+			const { container } = render(
+				<SignalledInput value={atomValue} onChange={noop} />
+			);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			store.set(atomValue, 'foobar');
+
+			expect(el.value).toBe('foobar');
+		});
+	});
+
+	describe('with defaultValue on an input element', () => {
+		const SignalledInput = withSignal('input', {
+			defaultValue: mapProperty('value'),
+		});
+		const store = getDefaultStore();
+		const atomValue = atom('foo');
+
+		beforeEach(() => {
+			store.set(atomValue, 'foo');
+		});
+
+		it('assigns props normally', () => {
+			const { container } = render(<SignalledInput defaultValue="15" />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			expect(el.value).toBe('15');
+		});
+
+		it('initializes mapped property with value from signal', () => {
+			const { container } = render(<SignalledInput defaultValue={atomValue} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			expect(el.value).toBe('foo');
+		});
+
+		it('updates mapped property with value from signal', () => {
+			const { container } = render(<SignalledInput defaultValue={atomValue} />);
+			const el: HTMLInputElement = container.firstChild as HTMLInputElement;
+
+			store.set(atomValue, 'foobar');
+
+			expect(el.value).toBe('foobar');
 		});
 	});
 

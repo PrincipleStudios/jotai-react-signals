@@ -6,4 +6,9 @@ export {
 	mapProperty,
 	mapAttribute,
 } from './internals/withSignal.mappings';
-export { withSignal } from './internals/withSignal';
+export {
+	type CSSPropertiesWithSignal,
+	type WithSignalComponent,
+	type WithSignalProps,
+	withSignal,
+} from './internals/withSignal';

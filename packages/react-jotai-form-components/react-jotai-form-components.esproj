@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+	<Import Project="$(RepositoryEngineeringDir)pnpm.targets" />
+
+	<ItemGroup>
+		<ProjectReference Include="../jotai-react-signals/jotai-react-signals.esproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<CompileOutputs Remove="dist/**/*" />
+		<Source Include="src/*.ts" />
+		<Source Include="src/*.tsx" />
+		<Source Remove="src/*.test.*" />
+		<CompileOutputs Include="@(Source->'dist/%(filename).js')" />
+		<CompileOutputs Include="@(Source->'dist/mjs/%(filename).js')" />
+		<CompileOutputs Include="@(Source->'dist/%(filename).d.ts')" />
+	</ItemGroup>
+</Project>

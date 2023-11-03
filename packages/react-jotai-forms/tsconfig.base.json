@@ -1,0 +1,22 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"extends": "../../tsconfig.json",
+	"display": "Forms Base",
+	"compilerOptions": {
+		"outDir": "dist",
+		"rootDir": "src"
+	},
+	"include": ["src"],
+	"exclude": [],
+	"references": [
+		{
+			"path": "../jotai-react-signals"
+		},
+		{
+			"path": "../jotai-utilities"
+		},
+		{
+			"path": "../react-jotai-form-components"
+		}
+	]
+}
