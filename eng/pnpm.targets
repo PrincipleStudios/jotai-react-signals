@@ -5,9 +5,9 @@
         <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
         <PackPnpmOnBuild>true</PackPnpmOnBuild>
 
-        <PnpmStepRecordDir Condition=" '$(PnpmStepRecordDir)' == '' ">$(SolutionRoot)node_modules\</PnpmStepRecordDir>
+        <PnpmStepRecordDir Condition=" '$(PnpmStepRecordDir)' == '' ">$(ProjectDir)node_modules\</PnpmStepRecordDir>
         <!-- pnpm allows an install for the entire solution -->
-        <PnpmInstallRecordPath Condition=" '$(PnpmInstallRecordPath)' == '' ">$(PnpmStepRecordDir)_.install.$(Configuration)._</PnpmInstallRecordPath>
+        <PnpmInstallRecordPath Condition=" '$(PnpmInstallRecordPath)' == '' ">$(SolutionRoot)node_modules\_.install.$(Configuration)._</PnpmInstallRecordPath>
         <PnpmPrebuildChecksRecordPath Condition=" '$(PnpmPrebuildChecksRecordPath)' == '' ">$(PnpmStepRecordDir)_.prebuild.$(Configuration)._</PnpmPrebuildChecksRecordPath>
         <PnpmLintRecordPath Condition=" '$(PnpmLintRecordPath)' == '' ">$(PnpmStepRecordDir)_.lint.$(Configuration)._</PnpmLintRecordPath>
 
@@ -32,7 +32,6 @@
         <PnpmPackagedFiles Include=".npmignore" />
 
         <PackageReference Include="JsonPeek" Version="1.2.0" PrivateAssets="All" />
-        <PackageReference Include="PrincipleStudios.MsBuild.Mutex" Version="0.1.0" PrivateAssets="All" />
     </ItemGroup>
 
 	<Target Name="_ComputeCompileOutputs" BeforeTargets="NodeBuild;_PrepareClean">
@@ -47,18 +46,12 @@
         </ItemGroup>
     </Target>
 
-    <Target Name="_PnpmInstall" Inputs="@(RestoreConfig)" Outputs="$(PnpmInstallRecordPath)">
-        <!-- Launched via PnpmInstall to run in a critical section -->
-        <Exec WorkingDirectory="$(ProjectDir)" Command="$(PnpmInstallScript)" />
-        <Touch AlwaysCreate="true" ForceTouch="true" Files="$(PnpmInstallRecordPath)" />
-    </Target>
-
     <Target Name="PnpmInstall" BeforeTargets="NodeBuild" Inputs="@(RestoreConfig)" Outputs="$(PnpmInstallRecordPath)">
         <!-- Runs _PnpmInstall in a critical section, meaning only one  -->
-        <MutexMsBuild MutexName="jotai-react-signals-pnpm-install"
-            Projects="$(MSBuildProjectFullPath)"
-            Targets="_PnpmInstall"
-            BuildInParallel="true" />
+        <MsBuild
+            Projects="$(SolutionRoot)eng/pnpm/pnpm-install.esproj"
+            Targets="PnpmInstall"
+            BuildInParallel="false" />
     </Target>
 
     <Target Name="PrebuildChecks" BeforeTargets="NodeBuild" DependsOnTargets="PnpmInstall" Inputs="@(Compile);@(CompileConfig)" Outputs="@(PnpmPrebuildChecksRecordPath)">
