@@ -15,16 +15,15 @@
 			"types": "./dist/*.d.ts",
 			"import": {
 				"types": "./dist/*.d.ts",
-				"default": "./dist/mjs/*.js"
+				"default": "./dist/mjs/*.mjs"
 			},
 			"require": "./dist/*.js",
 			"default": "./dist/*.js"
 		}
 	},
 	"scripts": {
-		"build": "npm run build:cjs && npm run build:esm",
-		"build:cjs": "tsc --build --force tsconfig.cjs.json",
-		"build:esm": "tsc --build --force tsconfig.esm.json",
+		"build": "npm run build:dts && rollup -c",
+		"build:dts": "tsc --build --force tsconfig.dts.json",
 		"test": "jest",
 		"lint": "npm run typecheck && npm run eslint && npm run prettier",
 		"lint:pre-commit": "npx lint-staged",

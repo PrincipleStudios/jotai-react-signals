@@ -25,6 +25,7 @@
         <RestoreConfig Include="$(SolutionRoot)pnpm-lock.yaml" />
         <RestoreConfig Include="package.json" />
         <CompileConfig Include="tsconfig*.json" />
+        <CompileConfig Include="rollup.config*.json" />
 		<CompileOutputs Include="dist/index.js" />
 		<CompileOutputs Include="dist/index.d.ts" />
 
@@ -60,7 +61,10 @@
     </Target>
 
     <Target Name="NodeBuild" BeforeTargets="Build" Inputs="@(Compile);@(RestoreConfig);@(CompileConfig)" Outputs="@(CompileOutputs)">
-        <Delete Files="dist/**/*" />
+        <ItemGroup>
+            <OutputCleanup Include="dist/**/*" />
+        </ItemGroup>
+        <Delete Files="@(OutputCleanup)" />
         <Exec WorkingDirectory="$(ProjectDir)" Command="$(PnpmBuildScript)" />
         <Touch ForceTouch="true" Files="@(CompileOutputs)" />
     </Target>

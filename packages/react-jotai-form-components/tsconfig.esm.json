@@ -2,7 +2,7 @@
 	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
 		"outDir": "dist/mjs",
-		"target": "es5",
+		"target": "ESNext",
 		"composite": false,
 		"declarationMap": false,
 		"declaration": false
