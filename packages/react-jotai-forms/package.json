@@ -1,6 +1,6 @@
 {
 	"name": "@principlestudios/react-jotai-forms",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "👻 React Forms using Jotai",
 	"main": "dist/index.js",
 	"module": "dist/mjs/index.js",
@@ -56,9 +56,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"@principlestudios/jotai-react-signals": "workspace:^",
-		"@principlestudios/jotai-utilities": "^0.5.0",
-		"jotai": "^2.5.0",
-		"react": "^18.2.0"
+		"@principlestudios/jotai-utilities": "^0.5.0"
 	},
 	"peerDependencies": {
 		"immer": "^10.0.3",

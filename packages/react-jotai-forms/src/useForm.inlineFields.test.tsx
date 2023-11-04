@@ -51,8 +51,13 @@ describe('useForm, inlineFields', () => {
 
 	it('receives form updates', () => {
 		const target = rendered.queryByRole('textbox')!;
-		console.log(target);
 		fireEvent.change(target, { target: { value: 'foobar' } });
 		expect(useFormResult.get().name).toBe('foobar');
+	});
+
+	it('sends updates to fields', () => {
+		const target = rendered.queryByRole('textbox')!;
+		useFormResult.set({ name: 'foobar' });
+		expect(target).toHaveProperty('value', 'foobar');
 	});
 });
