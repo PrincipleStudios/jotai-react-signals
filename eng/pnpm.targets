@@ -95,11 +95,11 @@
         <PropertyGroup>
             <PackageJsonLastModifiedTime>$([System.IO.File]::GetLastWriteTime('package.json').ToString('g'))</PackageJsonLastModifiedTime>
         </PropertyGroup>
-        <Exec WorkingDirectory="$(ProjectDir)" Command="npm version $(Version)" IgnoreExitCode="true" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="npm version $(Version)" IgnoreExitCode="true" Condition=" '$(NpmPackageVersion)' != '$(Version)' " />
         <MakeDir Directories="$(PackageOutputPath)"/>
         <Exec WorkingDirectory="$(ProjectDir)" Command="pnpm pack" />
         <Move SourceFiles="$(NpmPackageNormalizedName)-$(Version).tgz" DestinationFolder="$(PackageOutputPath)" />
-        <Exec WorkingDirectory="$(ProjectDir)" Command="npm version $(NpmPackageVersion)" IgnoreExitCode="true" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="npm version $(NpmPackageVersion)" IgnoreExitCode="true" Condition=" '$(NpmPackageVersion)' != '$(Version)' " />
         <Touch Files="package.json" Time="$(PackageJsonLastModifiedTime)" />
     </Target>
 
