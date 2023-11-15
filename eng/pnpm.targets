@@ -85,13 +85,22 @@
         <PropertyGroup>
             <NpmPackageNormalizedName>@(NpmPackageName->'%(Identity)'->Replace("@", "")->Replace("/", "-"))</NpmPackageNormalizedName>
             <NpmPackageVersion>@(NpmPackageVersion->'%(Identity)')</NpmPackageVersion>
+            <VersionPrefix>@(NpmPackageVersion->'%(Identity)')</VersionPrefix>
+            <Version>$(VersionPrefix)</Version>
+            <Version Condition=" '$(VersionSuffix)' != '' ">$(VersionPrefix)-$(VersionSuffix)</Version>
         </PropertyGroup>
     </Target>
 
     <Target Name="PnpmPack" BeforeTargets="Publish" DependsOnTargets="NodeBuild" Inputs="@(RestoreConfig);@(PnpmPackagedFiles);@(CompileOutputs)" Outputs="$(PackageOutputPath)$(NpmPackageNormalizedName)-$(NpmPackageVersion).tgz">
+        <PropertyGroup>
+            <PackageJsonLastModifiedTime>$([System.IO.File]::GetLastWriteTime('package.json').ToString('g'))</PackageJsonLastModifiedTime>
+        </PropertyGroup>
+        <Exec WorkingDirectory="$(ProjectDir)" Command="npm version $(Version)" IgnoreExitCode="true" />
         <MakeDir Directories="$(PackageOutputPath)"/>
         <Exec WorkingDirectory="$(ProjectDir)" Command="pnpm pack" />
-        <Move SourceFiles="$(NpmPackageNormalizedName)-$(NpmPackageVersion).tgz" DestinationFolder="$(PackageOutputPath)" />
+        <Move SourceFiles="$(NpmPackageNormalizedName)-$(Version).tgz" DestinationFolder="$(PackageOutputPath)" />
+        <Exec WorkingDirectory="$(ProjectDir)" Command="npm version $(NpmPackageVersion)" IgnoreExitCode="true" />
+        <Touch Files="package.json" Time="$(PackageJsonLastModifiedTime)" />
     </Target>
 
     <Target Name="VSTest">
