@@ -70,13 +70,16 @@ type ArrayPathInternal<T, TraversedTypes = T> = T extends ReadonlyArray<infer V>
 	: {
 			[K in keyof T]-?: ArrayPathImpl<K & string, T[K], TraversedTypes>;
 	  }[keyof T];
-type ArrayPath<T> = T extends any ? ArrayPathInternal<T> : never;
 
-export type Path<T> = IfAny<T, any, T extends any ? PathInternal<T> : never>;
-export type PathValue<T, P extends Path<T> | ArrayPath<T>> = IfAny<
+export type Path<T> =
+	| []
+	| IfAny<T, any, T extends any ? PathInternal<T> : never>;
+export type PathValue<T, P extends Path<T>> = IfAny<
 	P,
 	any,
-	T extends any
+	P extends []
+		? T
+		: T extends any
 		? P extends readonly [infer K]
 			? K extends keyof T
 				? T[K]
