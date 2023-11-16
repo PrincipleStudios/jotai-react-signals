@@ -279,9 +279,7 @@ function toField<T, TPath extends Path<T>, TValue>(
 		disabled: substateAtom(config.disabled, context.disabledFields),
 		readOnly: substateAtom(config.readOnly, context.readOnlyFields),
 	};
-	const unmappedAtom = context.atomFamily(
-		config.path as Path<T>
-	) as StandardWritableAtom<PathValue<T, TPath>>;
+	const unmappedAtom = context.atomFamily(config.path);
 	const fieldResult = toInternalFieldAtom<PathValue<T, TPath>, TValue>(
 		context.store,
 		unmappedAtom,
