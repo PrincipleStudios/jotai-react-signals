@@ -11,7 +11,6 @@ type Primitive = null | undefined | string | number | boolean | symbol | bigint;
 
 type BrowserNativeObject = Date | FileList | File;
 
-type IsAny<T> = 0 extends 1 & T ? true : false;
 type ArrayKey = number;
 type IsTuple<T extends ReadonlyArray<any>> = number extends T['length']
 	? false
@@ -22,16 +21,16 @@ type AnyIsEqual<T1, T2> = T1 extends T2
 		? true
 		: never
 	: never;
-type PathImpl<K extends string | number, V, TraversedTypes> = V extends
-	| Primitive
-	| BrowserNativeObject
-	? readonly [K]
-	: // Check so that we don't recurse into the same type
-	// by ensuring that the types are mutually assignable
-	// mutually required to avoid false positives of subtypes
-	true extends AnyIsEqual<TraversedTypes, V>
-	? readonly [K]
-	: readonly [K] | readonly [K, ...PathInternal<V, TraversedTypes | V>];
+type PathImpl<K extends string | number, V, TraversedTypes> =
+	| readonly [K]
+	| (V extends Primitive | BrowserNativeObject
+			? never
+			: // Check so that we don't recurse into the same type
+			// by ensuring that the types are mutually assignable
+			// mutually required to avoid false positives of subtypes
+			true extends AnyIsEqual<TraversedTypes, V>
+			? never
+			: readonly [K, ...PathInternal<V, TraversedTypes | V>]);
 type PathInternal<T, TraversedTypes = T> = T extends ReadonlyArray<infer V>
 	? IsTuple<T> extends true
 		? {
@@ -41,43 +40,14 @@ type PathInternal<T, TraversedTypes = T> = T extends ReadonlyArray<infer V>
 	: {
 			[K in keyof T]-?: PathImpl<K & string, T[K], TraversedTypes>;
 	  }[keyof T];
-type ArrayPathImpl<K extends string | number, V, TraversedTypes> = V extends
-	| Primitive
-	| BrowserNativeObject
-	? IsAny<V> extends true
-		? readonly [...any]
-		: never
-	: V extends ReadonlyArray<infer U>
-	? U extends Primitive | BrowserNativeObject
-		? IsAny<V> extends true
-			? readonly [...any]
-			: never
-		: // Check so that we don't recurse into the same type
-		// by ensuring that the types are mutually assignable
-		// mutually required to avoid false positives of subtypes
-		true extends AnyIsEqual<TraversedTypes, V>
-		? never
-		: readonly [K] | readonly [K, ...ArrayPathInternal<V, TraversedTypes | V>]
-	: true extends AnyIsEqual<TraversedTypes, V>
-	? never
-	: readonly [K, ...ArrayPathInternal<V, TraversedTypes | V>];
-type ArrayPathInternal<T, TraversedTypes = T> = T extends ReadonlyArray<infer V>
-	? IsTuple<T> extends true
-		? {
-				[K in TupleKeys<T>]-?: ArrayPathImpl<K & string, T[K], TraversedTypes>;
-		  }[TupleKeys<T>]
-		: ArrayPathImpl<ArrayKey, V, TraversedTypes>
-	: {
-			[K in keyof T]-?: ArrayPathImpl<K & string, T[K], TraversedTypes>;
-	  }[keyof T];
 
 export type Path<T> =
-	| []
+	| readonly []
 	| IfAny<T, any, T extends any ? PathInternal<T> : never>;
 export type PathValue<T, P extends Path<T>> = IfAny<
 	P,
 	any,
-	P extends []
+	P extends readonly []
 		? T
 		: T extends any
 		? P extends readonly [infer K]

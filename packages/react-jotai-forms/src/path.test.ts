@@ -73,6 +73,14 @@ describe('TypeScript path utilities', () => {
 			[] satisfies Path<Target>;
 			true satisfies IsExactType<PathValue<Target, []>, Target>;
 		});
+
+		function generic<T>() {
+			it('allows an arbitrary path with a T[]', () => {
+				[0] satisfies Path<T[]>;
+				true satisfies IsExactType<PathValue<T[], readonly [number]>, T>;
+			});
+		}
+		generic();
 	});
 
 	describe('primitive paths', () => {

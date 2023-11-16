@@ -233,14 +233,19 @@ export function buildFormFields<
 >(fields: TFields, params: FormResultContext<T>): FormFields<T, TFields> {
 	return Object.fromEntries(
 		Object.entries(fields).map(([field, config]) => {
-			return [
-				field,
-				typeof config === 'function'
-					? (...args: AnyArray) =>
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-							buildFormField(config(...args), params)
-					: buildFormField(config, params),
-			];
+			if (typeof config === 'function') {
+				// TODO: Not sure why this needs a conversion, there should only be one function type here
+				return [
+					field,
+					(...args: AnyArray) =>
+						buildFormField(
+							(config as (...args: AnyArray) => BaseAnyFieldConfig<T>)(...args),
+							params
+						),
+				];
+			} else {
+				return [field, buildFormField(config, params)];
+			}
 		})
 	) as never as FormFields<T, TFields>;
 }
