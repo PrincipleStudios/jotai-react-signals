@@ -6,21 +6,18 @@ import { RenderResult, fireEvent, render } from '@testing-library/react';
 import { fastWaitFor } from './test/fastWaitFor';
 import { waitForErrors } from './test/waitForErrors';
 
-const myFormSchema = z.object({
-	name: z.string(),
-});
+const myFormSchema = z.string();
 type MyForm = z.infer<typeof myFormSchema>;
 type ComponentProps = { onSubmit: (data: MyForm) => void };
 
-const myFormSchemaWithValidation = z.object({
-	name: z.string().min(3).max(10),
-}) satisfies z.ZodSchema<MyForm>;
+const myFormSchemaWithValidation = z
+	.string()
+	.min(3)
+	.max(10) satisfies z.ZodSchema<MyForm>;
 
-const defaultValue: MyForm = {
-	name: '',
-};
+const defaultValue: MyForm = '';
 
-describe('useForm, inlineFields', () => {
+describe('useForm, primitive', () => {
 	function translation(key: string) {
 		return `translate: ${key}`;
 	}
@@ -45,7 +42,7 @@ describe('useForm, inlineFields', () => {
 					onSubmit(v);
 				})}
 			>
-				<JotaiInput {...form.field(['name']).htmlProps()} />
+				<JotaiInput {...form.field([]).htmlProps()} />
 				<button type="submit">Submit</button>
 			</form>
 		);
@@ -125,7 +122,7 @@ describe('useForm, inlineFields', () => {
 
 			const loadedErrors = (await waitForErrors(useFormResult.errors))!;
 			expect(loadedErrors.issues[0].code).toBe('too_small');
-			expect(loadedErrors.issues[0].path).toStrictEqual(['name']);
+			expect(loadedErrors.issues[0].path).toStrictEqual([]);
 		});
 
 		it('updates messages after submit on blur', async () => {
@@ -160,7 +157,7 @@ describe('useForm, inlineFields', () => {
 			});
 
 			it('receives form updates', () => {
-				expect(useFormResult.get().name).toBe('foobar');
+				expect(useFormResult.get()).toBe('foobar');
 			});
 
 			it('does not rerender', () => {
@@ -172,15 +169,13 @@ describe('useForm, inlineFields', () => {
 				fireEvent.click(submitButton);
 
 				await fastWaitFor(() => expect(submitSpy).toBeCalled());
-				expect(submitSpy).toBeCalledWith<[MyForm]>({
-					name: 'foobar',
-				});
+				expect(submitSpy).toBeCalledWith<[MyForm]>('foobar');
 			});
 		});
 
 		describe('when updated via the form result', () => {
 			beforeEach(() => {
-				useFormResult.set({ name: 'foobar' });
+				useFormResult.set('foobar');
 			});
 
 			it('updates the input', () => {
@@ -197,9 +192,7 @@ describe('useForm, inlineFields', () => {
 				fireEvent.click(submitButton);
 
 				await fastWaitFor(() => expect(submitSpy).toBeCalled());
-				expect(submitSpy).toBeCalledWith<[MyForm]>({
-					name: 'foobar',
-				});
+				expect(submitSpy).toBeCalledWith<[MyForm]>('foobar');
 			});
 		});
 	}
