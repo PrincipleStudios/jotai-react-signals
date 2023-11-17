@@ -5,22 +5,23 @@ import { UseFormResult } from './types';
 import { RenderResult, fireEvent, render } from '@testing-library/react';
 import { fastWaitFor } from './test/fastWaitFor';
 import { waitForErrors } from './test/waitForErrors';
+import { useAtomValue } from 'jotai';
+import { useComputedAtom } from '@principlestudios/jotai-react-signals';
+import { useCallback } from 'react';
 
-const myFormSchema = z.object({
-	name: z.string(),
-});
+const myFormSchema = z.string().array();
 type MyForm = z.infer<typeof myFormSchema>;
 type ComponentProps = { onSubmit: (data: MyForm) => void };
 
-const myFormSchemaWithValidation = z.object({
-	name: z.string().min(3).max(10),
-}) satisfies z.ZodSchema<MyForm>;
+const myFormSchemaWithValidation = z
+	.string()
+	.min(3)
+	.max(10)
+	.array() satisfies z.ZodSchema<MyForm>;
 
-const defaultValue: MyForm = {
-	name: '',
-};
+const defaultValue: MyForm = [''];
 
-describe('useForm, inlineFields', () => {
+describe('useForm, array', () => {
 	function translation(key: string) {
 		return `translate: ${key}`;
 	}
@@ -39,13 +40,28 @@ describe('useForm, inlineFields', () => {
 		form,
 		onSubmit,
 	}: ComponentProps & { form: UseFormResult<MyForm> }) {
+		const arrayItemCount = useAtomValue(
+			useComputedAtom((get) => get(form.atom).length)
+		);
+		const addItem = useCallback(
+			function addItem() {
+				form.set((items) => [...items, '']);
+			},
+			[defaultValue]
+		);
+
 		return (
 			<form
 				onSubmit={form.handleSubmit((v) => {
 					onSubmit(v);
 				})}
 			>
-				<JotaiInput {...form.field(['name']).htmlProps()} />
+				{Array(arrayItemCount)
+					.fill(0)
+					.map((_, index) => (
+						<JotaiInput key={index} {...form.field([index]).htmlProps()} />
+					))}
+				<button onClick={addItem}>Add</button>
 				<button type="submit">Submit</button>
 			</form>
 		);
@@ -74,7 +90,9 @@ describe('useForm, inlineFields', () => {
 		});
 
 		it('can submit the default values', async () => {
-			const submitButton = rendered.queryByRole('button')!;
+			const submitButton = rendered.queryByRole('button', {
+				name: 'Submit',
+			})!;
 			fireEvent.click(submitButton);
 
 			await fastWaitFor(() => expect(submitSpy).toBeCalled());
@@ -120,16 +138,20 @@ describe('useForm, inlineFields', () => {
 		});
 
 		it('gets error messages after submit', async () => {
-			const submitButton = rendered.queryByRole('button')!;
+			const submitButton = rendered.queryByRole('button', {
+				name: 'Submit',
+			})!;
 			fireEvent.click(submitButton);
 
 			const loadedErrors = (await waitForErrors(useFormResult.errors))!;
 			expect(loadedErrors.issues[0].code).toBe('too_small');
-			expect(loadedErrors.issues[0].path).toStrictEqual(['name']);
+			expect(loadedErrors.issues[0].path).toStrictEqual([0]);
 		});
 
 		it('updates messages after submit on blur', async () => {
-			const submitButton = rendered.queryByRole('button')!;
+			const submitButton = rendered.queryByRole('button', {
+				name: 'Submit',
+			})!;
 			fireEvent.click(submitButton);
 			// error message at this time is too_small
 
@@ -142,7 +164,9 @@ describe('useForm, inlineFields', () => {
 		});
 
 		it('cannot submit the default values', async () => {
-			const submitButton = rendered.queryByRole('button')!;
+			const submitButton = rendered.queryByRole('button', {
+				name: 'Submit',
+			})!;
 			fireEvent.click(submitButton);
 
 			await waitForErrors(useFormResult.errors);
@@ -160,7 +184,7 @@ describe('useForm, inlineFields', () => {
 			});
 
 			it('receives form updates', () => {
-				expect(useFormResult.get().name).toBe('foobar');
+				expect(useFormResult.get()).toStrictEqual(['foobar']);
 			});
 
 			it('does not rerender', () => {
@@ -168,19 +192,19 @@ describe('useForm, inlineFields', () => {
 			});
 
 			it('can submit the new value', async () => {
-				const submitButton = rendered.queryByRole('button')!;
+				const submitButton = rendered.queryByRole('button', {
+					name: 'Submit',
+				})!;
 				fireEvent.click(submitButton);
 
 				await fastWaitFor(() => expect(submitSpy).toBeCalled());
-				expect(submitSpy).toBeCalledWith<[MyForm]>({
-					name: 'foobar',
-				});
+				expect(submitSpy).toBeCalledWith<[MyForm]>(['foobar']);
 			});
 		});
 
 		describe('when updated via the form result', () => {
 			beforeEach(() => {
-				useFormResult.set({ name: 'foobar' });
+				useFormResult.set(['foobar']);
 			});
 
 			it('updates the input', () => {
@@ -193,13 +217,61 @@ describe('useForm, inlineFields', () => {
 			});
 
 			it('can submit the new value', async () => {
-				const submitButton = rendered.queryByRole('button')!;
+				const submitButton = rendered.queryByRole('button', {
+					name: 'Submit',
+				})!;
 				fireEvent.click(submitButton);
 
 				await fastWaitFor(() => expect(submitSpy).toBeCalled());
-				expect(submitSpy).toBeCalledWith<[MyForm]>({
-					name: 'foobar',
-				});
+				expect(submitSpy).toBeCalledWith<[MyForm]>(['foobar']);
+			});
+
+			it('can add a new value', async () => {
+				const addButton = rendered.queryByRole('button', {
+					name: 'Add',
+				})!;
+				fireEvent.click(addButton);
+
+				expect(useFormResult.get()).toStrictEqual(['foobar', '']);
+				const target = await rendered.findAllByRole('textbox');
+				expect(target.length).toBe(2);
+			});
+
+			it('can update the new value as expected', async () => {
+				const addButton = rendered.queryByRole('button', {
+					name: 'Add',
+				})!;
+				fireEvent.click(addButton);
+				const target = await rendered.findAllByRole('textbox');
+				fireEvent.change(target[1], { target: { value: 'bombaz' } });
+
+				expect(useFormResult.get()).toStrictEqual(['foobar', 'bombaz']);
+			});
+		});
+
+		describe('with an additional entry', () => {
+			beforeEach(async () => {
+				const addButton = rendered.queryByRole('button', {
+					name: 'Add',
+				})!;
+				fireEvent.click(addButton);
+				useFormResult.set(['foobar', 'bombaz']);
+			});
+
+			it('updates the input', async () => {
+				const target = await rendered.findAllByRole('textbox');
+				expect(target[0]).toHaveProperty('value', 'foobar');
+				expect(target[1]).toHaveProperty('value', 'bombaz');
+			});
+
+			it('can submit the new value', async () => {
+				const submitButton = rendered.queryByRole('button', {
+					name: 'Submit',
+				})!;
+				fireEvent.click(submitButton);
+
+				await fastWaitFor(() => expect(submitSpy).toBeCalled());
+				expect(submitSpy).toBeCalledWith<[MyForm]>(['foobar', 'bombaz']);
 			});
 		});
 	}

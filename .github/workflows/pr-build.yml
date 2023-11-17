@@ -57,7 +57,14 @@ jobs:
     # BUILD
     - name: Build
       run: |
+        if [[ $VERSION_SUFFIX ]]; then
+          VERSION_SUFFIX_PARAM="--version-suffix sha.$VERSION_SUFFIX"
+        else
+          VERSION_SUFFIX_PARAM=''
+        fi
         dotnet build --configuration Release ${VERSION_SUFFIX_PARAM}
+      env:
+        VERSION_SUFFIX: ${{ github.ref != 'refs/heads/main' && github.sha || '' }}
 
     ###########
     # TEST
