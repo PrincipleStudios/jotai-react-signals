@@ -13,6 +13,8 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "react-jotai-forms", "packag
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "react-jotai-form-components", "packages\react-jotai-form-components\react-jotai-form-components.esproj", "{67DE029B-3912-4C4B-8EEA-B978CB9A482C}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "loadable", "packages\loadable\loadable.esproj", "{D04B6F33-82D9-4C93-8DBC-22131F6E1095}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{67DE029B-3912-4C4B-8EEA-B978CB9A482C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67DE029B-3912-4C4B-8EEA-B978CB9A482C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67DE029B-3912-4C4B-8EEA-B978CB9A482C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D04B6F33-82D9-4C93-8DBC-22131F6E1095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D04B6F33-82D9-4C93-8DBC-22131F6E1095}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D04B6F33-82D9-4C93-8DBC-22131F6E1095}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D04B6F33-82D9-4C93-8DBC-22131F6E1095}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

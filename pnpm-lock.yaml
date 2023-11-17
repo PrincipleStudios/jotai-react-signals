@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -159,6 +163,15 @@ importers:
       glob-promise:
         specifier: ^6.0.5
         version: 6.0.5(glob@8.1.0)
+
+  packages/loadable:
+    devDependencies:
+      '@principlestudios/eslint-config':
+        specifier: ^0.0.1
+        version: link:../eslint-config
+      '@principlestudios/shared':
+        specifier: ^0.0.1
+        version: link:../shared
 
   packages/react-jotai-form-components:
     dependencies:
