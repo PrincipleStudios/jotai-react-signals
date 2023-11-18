@@ -56,7 +56,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"@principlestudios/jotai-react-signals": "workspace:^",
-		"@principlestudios/jotai-utilities": "^0.5.0"
+		"@principlestudios/jotai-utilities": "workspace:^"
 	},
 	"peerDependencies": {
 		"immer": "^10.0.3",
@@ -65,9 +65,9 @@
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
-		"@principlestudios/eslint-config": "^0.0.1",
-		"@principlestudios/react-jotai-form-components": "^0.1.0",
-		"@principlestudios/shared": "^0.0.1",
+		"@principlestudios/eslint-config": "workspace:*",
+		"@principlestudios/react-jotai-form-components": "workspace:^",
+		"@principlestudios/shared": "workspace:*",
 		"immer": "^10.0.3",
 		"zod": "^3.22.4"
 	}
