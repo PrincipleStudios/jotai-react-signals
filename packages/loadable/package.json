@@ -53,7 +53,7 @@
 	"dependencies": {},
 	"peerDependencies": {},
 	"devDependencies": {
-		"@principlestudios/eslint-config": "^0.0.1",
-		"@principlestudios/shared": "^0.0.1"
+		"@principlestudios/eslint-config": "workspace:*",
+		"@principlestudios/shared": "workspace:*"
 	}
 }

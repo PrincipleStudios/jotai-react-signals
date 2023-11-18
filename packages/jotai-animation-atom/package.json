@@ -57,7 +57,7 @@
 		"jotai": ">=2.0.0"
 	},
 	"devDependencies": {
-		"@principlestudios/eslint-config": "^0.0.1",
-		"@principlestudios/shared": "^0.0.1"
+		"@principlestudios/eslint-config": "workspace:*",
+		"@principlestudios/shared": "workspace:*"
 	}
 }
