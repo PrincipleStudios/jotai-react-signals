@@ -1,27 +1,42 @@
 import { z } from 'zod';
 import { useForm } from './useForm';
 import JotaiInput from '@principlestudios/react-jotai-form-components/input';
-import { UseFormResult } from './types';
-import { RenderResult, act, fireEvent, render } from '@testing-library/react';
+import { FormFieldReturnType, UseFormResult } from './types';
+import { RenderResult, fireEvent, render } from '@testing-library/react';
 import { fastWaitFor } from './test/fastWaitFor';
 import { waitForErrors } from './test/waitForErrors';
-import { useAtomValue } from 'jotai';
-import { useComputedAtom } from '@principlestudios/jotai-react-signals';
-import { Fragment, useCallback } from 'react';
+import { useFormFields } from './useFormFields';
 
-const myFormSchema = z.string().array();
+const myFormSchema = z.object({
+	address: z.object({
+		street: z.string(),
+		city: z.string(),
+		state: z.string(),
+		zipCode: z.string(),
+	}),
+});
 type MyForm = z.infer<typeof myFormSchema>;
 type ComponentProps = { onSubmit: (data: MyForm) => void };
 
-const myFormSchemaWithValidation = z
-	.string()
-	.min(3)
-	.max(10)
-	.array() satisfies z.ZodSchema<MyForm>;
+const myFormSchemaWithValidation = z.object({
+	address: z.object({
+		street: z.string().min(1),
+		city: z.string().min(1),
+		state: z.string().length(2),
+		zipCode: z.string().length(5),
+	}),
+});
 
-const defaultValue: MyForm = [''];
+const defaultValue: MyForm = {
+	address: {
+		street: '',
+		city: '',
+		state: '',
+		zipCode: '',
+	},
+};
 
-describe('useForm, array', () => {
+describe('useForm, nested-object', () => {
 	function translation(key: string) {
 		return `translate: ${key}`;
 	}
@@ -38,36 +53,40 @@ describe('useForm, array', () => {
 
 	function FormPresentation({
 		form,
+		address,
 		onSubmit,
-	}: ComponentProps & { form: UseFormResult<MyForm> }) {
-		const arrayItemCount = useAtomValue(
-			useComputedAtom((get) => get(form.atom).length)
-		);
-		const addItem = useCallback(
-			function addItem() {
-				form.set((items) => [...items, '']);
-			},
-			[defaultValue]
-		);
-		const removeItem = useCallback(function removeItem(index: number) {
-			form.set((items) => items.filter((_, i) => i !== index));
-		}, []);
-
+	}: ComponentProps & {
+		form: UseFormResult<MyForm>;
+		address: FormFieldReturnType<MyForm['address']>;
+	}) {
+		const { street, city, state, zipCode } = useFormFields(address, {
+			street: ['street'],
+			city: ['city'],
+			state: ['state'],
+			zipCode: ['zipCode'],
+		});
 		return (
 			<form
 				onSubmit={form.handleSubmit((v) => {
 					onSubmit(v);
 				})}
 			>
-				{Array(arrayItemCount)
-					.fill(0)
-					.map((_, index) => (
-						<Fragment key={index}>
-							<JotaiInput {...form.field([index]).htmlProps()} />
-							<button onClick={() => removeItem(index)}>Remove {index}</button>
-						</Fragment>
-					))}
-				<button onClick={addItem}>Add</button>
+				<JotaiInput
+					{...street.htmlProps()}
+					aria-label={street.translationPath.join('.')}
+				/>
+				<JotaiInput
+					{...city.htmlProps()}
+					aria-label={city.translationPath.join('.')}
+				/>
+				<JotaiInput
+					{...state.htmlProps()}
+					aria-label={state.translationPath.join('.')}
+				/>
+				<JotaiInput
+					{...zipCode.htmlProps()}
+					aria-label={zipCode.translationPath.join('.')}
+				/>
 				<button type="submit">Submit</button>
 			</form>
 		);
@@ -79,11 +98,20 @@ describe('useForm, array', () => {
 				schema: myFormSchema,
 				defaultValue,
 				translation,
+				fields: {
+					address: ['address'],
+				},
 			});
 			useFormResult = form;
 			renderCount++;
 
-			return <FormPresentation form={form} onSubmit={onSubmit} />;
+			return (
+				<FormPresentation
+					address={form.fields.address}
+					form={form}
+					onSubmit={onSubmit}
+				/>
+			);
 		}
 
 		beforeEach(() => {
@@ -108,17 +136,66 @@ describe('useForm, array', () => {
 		standardUpdateAndSubmitTests();
 	});
 
+	describe('with invalid paths', () => {
+		function MyFormComponent({ onSubmit }: ComponentProps) {
+			// @ts-expect-error the correct path is 'address', not 'billingAddress'
+			const form = useForm({
+				schema: myFormSchemaWithValidation,
+				defaultValue,
+				translation,
+				fields: {
+					address: ['billingAddress'],
+				},
+			});
+			useFormResult = form;
+			renderCount++;
+
+			return (
+				<FormPresentation
+					// @ts-expect-error the form library might not allow access of "fields"
+					address={form.fields.address}
+					form={form}
+					onSubmit={onSubmit}
+				/>
+			);
+		}
+
+		// The following tests intentionally output warnings
+		let warn: jest.SpyInstance;
+		beforeEach(() => {
+			warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+			rendered = render(<MyFormComponent onSubmit={submitSpy} />);
+		});
+		afterEach(() => {
+			warn.mockReset();
+		});
+
+		it('renders gracefully', () => {
+			expect(useFormResult.get()).toBe(defaultValue);
+			expect(renderCount).toBe(1);
+		});
+	});
+
 	describe('with validation', () => {
 		function MyFormComponent({ onSubmit }: ComponentProps) {
 			const form = useForm({
 				schema: myFormSchemaWithValidation,
 				defaultValue,
 				translation,
+				fields: {
+					address: ['address'],
+				},
 			});
 			useFormResult = form;
 			renderCount++;
 
-			return <FormPresentation form={form} onSubmit={onSubmit} />;
+			return (
+				<FormPresentation
+					address={form.fields.address}
+					form={form}
+					onSubmit={onSubmit}
+				/>
+			);
 		}
 
 		beforeEach(() => {
@@ -136,7 +213,7 @@ describe('useForm, array', () => {
 		});
 
 		it('does not have error messages until submit', async () => {
-			const target = rendered.queryByRole('textbox')!;
+			const target = rendered.getByLabelText('address.street');
 			fireEvent.change(target, { target: { value: 'no' } });
 
 			const loadedErrors = await waitForErrors(useFormResult.errors);
@@ -150,8 +227,12 @@ describe('useForm, array', () => {
 			fireEvent.click(submitButton);
 
 			const loadedErrors = (await waitForErrors(useFormResult.errors))!;
-			expect(loadedErrors.issues[0].code).toBe('too_small');
-			expect(loadedErrors.issues[0].path).toStrictEqual([0]);
+			const targetError = loadedErrors.issues.find(
+				(e) => e.path[1] === 'zipCode'
+			);
+			expect(targetError).not.toBe(undefined);
+			expect(targetError?.code).toStrictEqual('too_small');
+			expect(targetError?.path).toStrictEqual(['address', 'zipCode']);
 		});
 
 		it('updates messages after submit on blur', async () => {
@@ -161,12 +242,14 @@ describe('useForm, array', () => {
 			fireEvent.click(submitButton);
 			// error message at this time is too_small
 
-			const target = rendered.queryByRole('textbox')!;
+			const target = rendered.getByLabelText('address.zipCode');
 			fireEvent.change(target, { target: { value: 'this value is too long' } });
 			fireEvent.blur(target);
 
 			const loadedErrors = (await waitForErrors(useFormResult.errors))!;
-			expect(loadedErrors.issues[0].code).toBe('too_big');
+			expect(
+				loadedErrors.issues.find((e) => e.path[1] === 'zipCode')?.code
+			).toStrictEqual('too_big');
 		});
 
 		it('cannot submit the default values', async () => {
@@ -185,12 +268,14 @@ describe('useForm, array', () => {
 	function standardUpdateAndSubmitTests() {
 		describe('when the user updates the field', () => {
 			beforeEach(() => {
-				const target = rendered.queryByRole('textbox')!;
+				const target = rendered.getByLabelText('address.street');
 				fireEvent.change(target, { target: { value: 'foobar' } });
 			});
 
 			it('receives form updates', () => {
-				expect(useFormResult.get()).toStrictEqual(['foobar']);
+				expect(useFormResult.get()).toStrictEqual({
+					address: { city: '', state: '', street: 'foobar', zipCode: '' },
+				});
 			});
 
 			it('does not rerender', () => {
@@ -198,24 +283,48 @@ describe('useForm, array', () => {
 			});
 
 			it('can submit the new value', async () => {
+				fireEvent.change(rendered.getByLabelText('address.city'), {
+					target: { value: 'Richardson' },
+				});
+				fireEvent.change(rendered.getByLabelText('address.state'), {
+					target: { value: 'TX' },
+				});
+				fireEvent.change(rendered.getByLabelText('address.zipCode'), {
+					target: { value: '75081' },
+				});
+
 				const submitButton = rendered.queryByRole('button', {
 					name: 'Submit',
 				})!;
 				fireEvent.click(submitButton);
 
 				await fastWaitFor(() => expect(submitSpy).toBeCalled());
-				expect(submitSpy).toBeCalledWith<[MyForm]>(['foobar']);
+				expect(submitSpy).toBeCalledWith<[MyForm]>({
+					address: {
+						city: 'Richardson',
+						state: 'TX',
+						street: 'foobar',
+						zipCode: '75081',
+					},
+				});
 			});
 		});
 
 		describe('when updated via the form result', () => {
 			beforeEach(() => {
-				useFormResult.set(['foobar']);
+				useFormResult.set({
+					address: {
+						city: 'Richardson',
+						state: 'TX',
+						street: '123 W Main St',
+						zipCode: '75081',
+					},
+				});
 			});
 
 			it('updates the input', () => {
-				const target = rendered.queryByRole('textbox')!;
-				expect(target).toHaveProperty('value', 'foobar');
+				const target = rendered.getByLabelText('address.street');
+				expect(target).toHaveProperty('value', '123 W Main St');
 			});
 
 			it('does not rerender', () => {
@@ -229,88 +338,14 @@ describe('useForm, array', () => {
 				fireEvent.click(submitButton);
 
 				await fastWaitFor(() => expect(submitSpy).toBeCalled());
-				expect(submitSpy).toBeCalledWith<[MyForm]>(['foobar']);
-			});
-
-			it('can add a new value', async () => {
-				const addButton = rendered.queryByRole('button', {
-					name: 'Add',
-				})!;
-				fireEvent.click(addButton);
-
-				expect(useFormResult.get()).toStrictEqual(['foobar', '']);
-				const target = await rendered.findAllByRole('textbox');
-				expect(target.length).toBe(2);
-			});
-
-			it('can update the new value as expected', async () => {
-				const addButton = rendered.queryByRole('button', {
-					name: 'Add',
-				})!;
-				fireEvent.click(addButton);
-				const target = await rendered.findAllByRole('textbox');
-				fireEvent.change(target[1], { target: { value: 'bombaz' } });
-
-				expect(useFormResult.get()).toStrictEqual(['foobar', 'bombaz']);
-			});
-
-			it('can update the new value imperatively', async () => {
-				const addButton = rendered.queryByRole('button', {
-					name: 'Add',
-				})!;
-				fireEvent.click(addButton);
-
-				useFormResult.set(['foobar', 'bombaz']);
-
-				const target = await rendered.findAllByRole('textbox');
-				expect((target[1] as HTMLInputElement).value).toBe('bombaz');
-			});
-		});
-
-		describe('with an additional entry', () => {
-			beforeEach(async () => {
-				const addButton = rendered.queryByRole('button', {
-					name: 'Add',
-				})!;
-				fireEvent.click(addButton);
-				useFormResult.set(['foobar', 'bombaz']);
-			});
-
-			it('updates the input', async () => {
-				const target = await rendered.findAllByRole('textbox');
-				expect(target[0]).toHaveProperty('value', 'foobar');
-				expect(target[1]).toHaveProperty('value', 'bombaz');
-			});
-
-			it('can submit the new value', async () => {
-				const submitButton = rendered.queryByRole('button', {
-					name: 'Submit',
-				})!;
-				fireEvent.click(submitButton);
-
-				await fastWaitFor(() => expect(submitSpy).toBeCalled());
-				expect(submitSpy).toBeCalledWith<[MyForm]>(['foobar', 'bombaz']);
-			});
-
-			it('can remove a value', async () => {
-				const removeButton = rendered.queryByRole('button', {
-					name: 'Remove 0',
-				})!;
-				fireEvent.click(removeButton);
-
-				expect(useFormResult.get()).toStrictEqual(['bombaz']);
-				const target = await rendered.findAllByRole('textbox');
-				expect(target.length).toBe(1);
-			});
-
-			it('can remove a value imperatively', async () => {
-				act(() => {
-					useFormResult.set((items) => items.filter((_, i) => i !== 0));
+				expect(submitSpy).toBeCalledWith<[MyForm]>({
+					address: {
+						city: 'Richardson',
+						state: 'TX',
+						street: '123 W Main St',
+						zipCode: '75081',
+					},
 				});
-
-				expect(useFormResult.get()).toStrictEqual(['bombaz']);
-				const target = await rendered.findAllByRole('textbox');
-				expect(target.length).toBe(1);
 			});
 		});
 	}

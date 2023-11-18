@@ -5,7 +5,7 @@ import type {
 	ZodUnion,
 	ZodUnionOptions,
 } from 'zod';
-import { ZodNull } from 'zod';
+import { z, ZodNull } from 'zod';
 import type { AnyPath, Path, PathValue } from '../path';
 
 export function getZodSchemaForPath<T, TPath extends Path<T>>(
@@ -47,11 +47,17 @@ export function getZodSchemaForPath(
 		} else if ('innerType' in (current as ZodOptional<ZodTypeAny>)._def) {
 			return doStep(step, (current as ZodOptional<ZodTypeAny>)._def.innerType);
 		} else {
-			console.error('during', { steps, schema }, 'unable to continue at', {
-				step,
-				current,
-			});
-			throw new Error('Unable to walk zod path; see console');
+			console.warn(
+				'Attempting to resolve schema during',
+				{ steps, schema },
+				'unable to continue at',
+				{
+					step,
+					current,
+				}
+			);
+
+			return z.undefined();
 		}
 	}
 }
