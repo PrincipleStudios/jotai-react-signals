@@ -83,7 +83,7 @@ jobs:
       working-directory: ./artifacts/packages/Release
       if: ${{ github.ref == 'refs/heads/main' }}
       run:  |
-        echo '@principlestudios:registry=https://registry.npmjs.org/' > ${NPM_CONFIG_USERCONFIG}
+        sed -i 's_//npm.pkg.github.com/_//registry.npmjs.org/_g' ${NPM_CONFIG_USERCONFIG}
         find . -type f -regex ".*\.tgz" -exec npm publish "{}" --access public \;
       env:
         NODE_AUTH_TOKEN: "${{ secrets.NPM_TOKEN }}"
