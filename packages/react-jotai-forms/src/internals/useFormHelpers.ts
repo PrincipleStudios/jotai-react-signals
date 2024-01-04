@@ -262,22 +262,28 @@ function toField<T, TPath extends Path<T>, TValue>(
 	config: FieldConfig<T, TPath, TValue>,
 	context: FormResultContext<T>
 ): FormFieldReturnType<TValue, DefaultFormFieldResultFlags> {
+	// Types get complex due to the PathValue<T, TPath> not always being
+	// identical to TValue. Defining up top keeps things simpler.
+	type CurrentPathValue = PathValue<T, TPath>;
+	type Mapping = FieldMapping<CurrentPathValue, TValue> | undefined;
+	type Schema = ZodType<CurrentPathValue>;
+
+	const prevPath = context.translationPath;
+	const currentPath = config.translationPath ?? (config.path as AnyPath);
 	const result = toFormSubset<T, TPath, TValue>(config, context);
-	const options: Partial<FieldOptions<PathValue<T, TPath>, TValue>> = {
-		// TODO: figure out why this needs a cast
-		mapping: config.mapping as FieldOptions<
-			PathValue<T, TPath>,
-			TValue
-		>['mapping'],
-		schema: getZodSchemaForPath(config.path, context.schema),
+	const options: Partial<FieldOptions<CurrentPathValue, TValue>> = {
+		mapping: config.mapping as Mapping,
+		schema: getZodSchemaForPath(config.path, context.schema) as Schema,
+		postMappingSchemaPrefix: [...prevPath, ...currentPath],
+		postMappingSchema: config.schema,
 		errorStrategy: context.errorStrategy,
 		formEvents: context.formEvents,
 		translation: (part) =>
 			context.formTranslation(
 				[
 					'fields',
-					...context.translationPath,
-					...(config.translationPath ?? (config.path as AnyPath)),
+					...prevPath,
+					...currentPath,
 					...(typeof part === 'string' ? [part] : part),
 				].join('.')
 			),
@@ -285,7 +291,7 @@ function toField<T, TPath extends Path<T>, TValue>(
 		readOnly: substateAtom(config.readOnly, context.readOnlyFields),
 	};
 	const unmappedAtom = context.atomFamily(config.path);
-	const fieldResult = toInternalFieldAtom<PathValue<T, TPath>, TValue>(
+	const fieldResult = toInternalFieldAtom<CurrentPathValue, TValue>(
 		context.store,
 		unmappedAtom,
 		options
@@ -297,13 +303,11 @@ function toField<T, TPath extends Path<T>, TValue>(
 	};
 
 	function substateAtom<TState extends FieldStatePrimitive>(
-		value:
-			| undefined
-			| FieldStateOverride<T, PathValue<T, TPath>, TValue, TState>,
+		value: undefined | FieldStateOverride<T, CurrentPathValue, TValue, TState>,
 		state: FieldStateAtom<TState>
 	):
 		| FieldStateAtom<TState>
-		| FieldStateCallback<PerFieldState<TState>, PathValue<T, TPath>, TValue> {
+		| FieldStateCallback<PerFieldState<TState>, CurrentPathValue, TValue> {
 		if (typeof value === 'function') {
 			return (props, getter) =>
 				value(
