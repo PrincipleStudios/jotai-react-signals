@@ -14,6 +14,7 @@ import type {
 } from './HtmlProps';
 import type { FieldTranslation } from './FieldTranslation';
 import type { ErrorsAtom } from './ErrorsAtom';
+import { AnyPath } from '../path';
 
 export type UseFieldResultFlags = {
 	hasErrors: boolean;
@@ -50,6 +51,8 @@ export type FieldStateCallback<T, TOriginalValue, TDerivedValue> = (
 export type FieldOptions<TValue, TFormFieldValue> = {
 	schema: ZodType<TValue>;
 	mapping: FieldMapping<TValue, TFormFieldValue>;
+	postMappingSchemaPrefix: AnyPath;
+	postMappingSchema: ZodType<TFormFieldValue>;
 	errorStrategy: RegisterErrorStrategy;
 	formEvents: FormEvents;
 	translation: FieldTranslation;
@@ -62,11 +65,13 @@ export type FieldOptions<TValue, TFormFieldValue> = {
 };
 export type UnmappedOptions<TValue> = Partial<FieldOptions<TValue, TValue>> & {
 	mapping?: never;
+	postMappingSchema?: never;
 };
 export type MappedOptions<TValue, TFieldValue> = Partial<
 	FieldOptions<TValue, TFieldValue>
 > & {
 	mapping: FieldMapping<TValue, TFieldValue>;
+	postMappingSchema?: ZodType<TFieldValue>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

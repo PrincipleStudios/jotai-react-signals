@@ -30,6 +30,7 @@ import type { ZodType } from 'zod';
 import type { PerFieldState } from './fieldStateTracking';
 import { toFieldStateValue, toWritableAtom } from './fieldStateTracking';
 import type { UseFieldResult } from '../useField';
+import { AnyPath } from '..';
 
 const identity = <T>(orig: T) => orig;
 export function toInternalFieldAtom<
@@ -82,10 +83,23 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 		mapping.fromForm
 	);
 
-	const schema = 'schema' in options ? options.schema : null;
-	const errors = schema
+	const schema = options.schema ?? null;
+	const errors = options.postMappingSchema
 		? options.errorStrategy
-			? createErrorStrategyAtom(schema, options.errorStrategy)
+			? createErrorStrategyAtom(
+					formValueAtom,
+					options.postMappingSchema,
+					options.errorStrategy,
+					options.postMappingSchemaPrefix
+			  )
+			: createErrorsAtom(
+					formValueAtom,
+					options.postMappingSchema,
+					options.postMappingSchemaPrefix
+			  )
+		: schema
+		? options.errorStrategy
+			? createErrorStrategyAtom(fieldValueAtom, schema, options.errorStrategy)
 			: createErrorsAtom(fieldValueAtom, schema)
 		: undefined;
 
@@ -141,7 +155,7 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 		readOnly,
 		setValue,
 		getValue: () => store.get(formValueAtom),
-		schema,
+		schema: options.postMappingSchema ?? schema,
 		errors,
 		translation: options.translation,
 		onChange(v: TFieldValue | ((prev: TFieldValue) => TFieldValue)) {
@@ -177,17 +191,25 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 						: mapping.fromForm(newResult);
 				},
 			},
+			// TODO - should we require a post-mapping schema?
+			postMappingSchema: undefined,
 		} satisfies Partial<FieldOptions<TValue, TNew>>;
 		const result = toInternalFieldAtom(store, fieldValueAtom, newOptions);
 		mappings.set(newMapping, result);
 		return result;
 	}
 
-	function createErrorStrategyAtom(
-		schema: ZodType<TValue>,
-		strategy: RegisterErrorStrategy
+	function createErrorStrategyAtom<T>(
+		atom: StandardWritableAtom<T>,
+		schema: ZodType<T>,
+		strategy: RegisterErrorStrategy,
+		pathInSchema: AnyPath = []
 	) {
-		const [result, trigger] = createTriggeredErrorsAtom(fieldValueAtom, schema);
+		const [result, trigger] = createTriggeredErrorsAtom(
+			atom,
+			schema,
+			pathInSchema
+		);
 		strategy(fieldEvents, () => store.set(trigger));
 		return result;
 	}

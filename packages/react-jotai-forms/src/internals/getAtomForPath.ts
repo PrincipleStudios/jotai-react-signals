@@ -19,8 +19,11 @@ export function getValueAtPath<T, TPath extends Path<T>>(
 				input as unknown
 			) as PathValue<T, TPath>;
 		} catch (ex) {
-			console.warn({ input, steps });
-			throw ex;
+			console.warn(
+				'Unable to find a value at the following path; using "undefined"',
+				{ input, steps }
+			);
+			return undefined!;
 		}
 	};
 }
