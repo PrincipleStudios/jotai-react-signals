@@ -95,7 +95,7 @@ export type FormFields<T, TFields extends FieldsConfig<T>> = {
 export type FormOptions<T> = {
 	schema: ZodType<T>;
 	defaultValue: T;
-	translation: (field: string) => string;
+	translation: (this: void, field: string) => string;
 	preSubmit?: ErrorsStrategy;
 	postSubmit?: ErrorsStrategy;
 	disabled?: PerFieldState<boolean>;
