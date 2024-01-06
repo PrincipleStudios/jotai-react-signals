@@ -22,8 +22,9 @@ export interface UseFormResult<T> {
 	defaultValue: React.MutableRefObject<T>;
 	disabledFields: FieldStateAtom<boolean>;
 	readOnlyFields: FieldStateAtom<boolean>;
-	formTranslation: (field: string) => string;
+	formTranslation: (this: void, field: string) => string;
 	field<TPath extends Path<T>>(
+		this: void,
 		path: TPath
 	): FormFieldReturnType<PathValue<T, TPath>, DefaultFormFieldResultFlags>;
 	updateAllErrors(this: void): void;

@@ -35,9 +35,12 @@ export type UseFieldResult<
 	/** An atom representing whether the field is read-only. */
 	readOnly: Atom<boolean>;
 	/** A function to set the field's value. */
-	setValue(v: TFieldValue | ((prev: TFieldValue) => TFieldValue)): void;
+	setValue(
+		this: void,
+		v: TFieldValue | ((prev: TFieldValue) => TFieldValue)
+	): void;
 	/** A function to get the field's value. */
-	getValue(): TFieldValue;
+	getValue(this: void): TFieldValue;
 	/** A function to handle field value change. */
 	onChange(
 		this: void,
@@ -49,6 +52,7 @@ export type UseFieldResult<
 	htmlProps: ToHtmlProps<TFieldValue>;
 	/** A function to apply a mapping to the field's value. */
 	applyMapping<TNewValue>(
+		this: void,
 		mapping: FieldMapping<TFieldValue, TNewValue>
 	): UseFieldResult<TNewValue, TFlags>;
 } & IfTrueThenProp<
