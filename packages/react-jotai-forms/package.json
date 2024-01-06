@@ -1,6 +1,6 @@
 {
 	"name": "@principlestudios/react-jotai-forms",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "👻 React Forms using Jotai",
 	"main": "dist/index.js",
 	"module": "dist/mjs/index.js",
