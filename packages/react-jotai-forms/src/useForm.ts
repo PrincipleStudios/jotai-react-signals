@@ -17,32 +17,33 @@ import {
 } from './internals/useFormHelpers';
 import { StandardWritableAtom } from './internals/StandardWritableAtom';
 
-export function useForm<T>(options: FormOptions<T>): UseFormResult<T>;
+export function useForm<T>(
+	options: FormOptions<T> & { defaultValue: T }
+): UseFormResult<T>;
 export function useForm<T, const TFields extends FieldsConfig<T>>(
-	options: FormOptions<T> & FormFieldsOptions<T, TFields>
+	options: FormOptions<T> & { defaultValue: T } & FormFieldsOptions<T, TFields>
 ): UseFormResultWithFields<T, TFields>;
 export function useForm<T>({
 	defaultValue,
 	...options
-}: FormOptions<T> & Partial<FormFieldsOptions<T, FieldsConfig<T>>>):
-	| UseFormResult<T>
-	| UseFormResultWithFields<T, FieldsConfig<T>> {
+}: FormOptions<T> & { defaultValue: T } & Partial<
+		FormFieldsOptions<T, FieldsConfig<T>>
+	>): UseFormResult<T> | UseFormResultWithFields<T, FieldsConfig<T>> {
 	const formAtom = useConstant(() => atom(defaultValue));
 	return useFormAtom(formAtom, options);
 }
 
 export function useFormAtom<T>(
 	formAtom: StandardWritableAtom<T> & { init: T },
-	options: Omit<FormOptions<T>, 'defaultValue'>
+	options: FormOptions<T>
 ): UseFormResult<T>;
 export function useFormAtom<T, const TFields extends FieldsConfig<T>>(
 	formAtom: StandardWritableAtom<T> & { init: T },
-	options: Omit<FormOptions<T> & FormFieldsOptions<T, TFields>, 'defaultValue'>
+	options: FormOptions<T> & FormFieldsOptions<T, TFields>
 ): UseFormResultWithFields<T, TFields>;
 export function useFormAtom<T>(
 	formAtom: StandardWritableAtom<T> & { init: T },
-	options: Omit<FormOptions<T>, 'defaultValue'> &
-		Partial<FormFieldsOptions<T, FieldsConfig<T>>>
+	options: FormOptions<T> & Partial<FormFieldsOptions<T, FieldsConfig<T>>>
 ): UseFormResult<T> | UseFormResultWithFields<T, FieldsConfig<T>> {
 	const store = useStore();
 	return useConstant(
@@ -55,15 +56,6 @@ export function useFormAtom<T>(
 			);
 			const atomFamily = createPathAtomFamily(formAtom);
 
-			const defaultValue = {
-				get current(): T {
-					return formAtom.init;
-				},
-				set current(value) {
-					formAtom.init = value;
-				},
-			};
-
 			const result = buildFormResult<T>({
 				pathPrefix: [],
 				translationPath: [],
@@ -74,7 +66,6 @@ export function useFormAtom<T>(
 				formEvents,
 				errorStrategy: strategy,
 				formTranslation: options.translation,
-				defaultValue,
 				disabledFields: toAtomFieldState(options.disabled ?? false),
 				readOnlyFields: toAtomFieldState(options.readOnly ?? false),
 			});
