@@ -15,13 +15,34 @@ import {
 	buildFormResult,
 	buildFormFields,
 } from './internals/useFormHelpers';
+import { StandardWritableAtom } from './internals/StandardWritableAtom';
 
 export function useForm<T>(options: FormOptions<T>): UseFormResult<T>;
 export function useForm<T, const TFields extends FieldsConfig<T>>(
 	options: FormOptions<T> & FormFieldsOptions<T, TFields>
 ): UseFormResultWithFields<T, TFields>;
-export function useForm<T>(
-	options: FormOptions<T> & Partial<FormFieldsOptions<T, FieldsConfig<T>>>
+export function useForm<T>({
+	defaultValue,
+	...options
+}: FormOptions<T> & Partial<FormFieldsOptions<T, FieldsConfig<T>>>):
+	| UseFormResult<T>
+	| UseFormResultWithFields<T, FieldsConfig<T>> {
+	const formAtom = useConstant(() => atom(defaultValue));
+	return useFormAtom(formAtom, options);
+}
+
+export function useFormAtom<T>(
+	formAtom: StandardWritableAtom<T> & { init: T },
+	options: Omit<FormOptions<T>, 'defaultValue'>
+): UseFormResult<T>;
+export function useFormAtom<T, const TFields extends FieldsConfig<T>>(
+	formAtom: StandardWritableAtom<T> & { init: T },
+	options: Omit<FormOptions<T> & FormFieldsOptions<T, TFields>, 'defaultValue'>
+): UseFormResultWithFields<T, TFields>;
+export function useFormAtom<T>(
+	formAtom: StandardWritableAtom<T> & { init: T },
+	options: Omit<FormOptions<T>, 'defaultValue'> &
+		Partial<FormFieldsOptions<T, FieldsConfig<T>>>
 ): UseFormResult<T> | UseFormResultWithFields<T, FieldsConfig<T>> {
 	const store = useStore();
 	return useConstant(
@@ -32,7 +53,6 @@ export function useForm<T>(
 				options.postSubmit ?? 'onBlur',
 				formEvents
 			);
-			const formAtom = atom(options.defaultValue);
 			const atomFamily = createPathAtomFamily(formAtom);
 
 			const defaultValue = {
