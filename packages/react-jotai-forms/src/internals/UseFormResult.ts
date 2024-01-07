@@ -19,7 +19,6 @@ export interface UseFormResult<T> {
 	schema: ZodType<T>;
 	errors: Atom<Loadable<ZodError<T> | null>>;
 	formEvents: FormEvents;
-	defaultValue: React.MutableRefObject<T>;
 	disabledFields: FieldStateAtom<boolean>;
 	readOnlyFields: FieldStateAtom<boolean>;
 	formTranslation: (this: void, field: string) => string;

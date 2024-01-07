@@ -14,10 +14,7 @@ import type {
 import { useConstant } from './internals/useConstant';
 import type { Path } from './path';
 
-export function useFormFields<
-	T extends Objectish,
-	const TFields extends FieldsConfig<T>,
->(
+export function useFormFields<T, const TFields extends FieldsConfig<T>>(
 	form: UseFormResult<T>,
 	fields: TFields
 ): UseFieldsResult<T, TFields>['fields'] {
@@ -25,11 +22,7 @@ export function useFormFields<
 }
 
 // TODO - accept function callbacks
-export function useFormField<
-	T extends Objectish,
-	TPath extends Path<T>,
-	TValue,
->(
+export function useFormField<T, TPath extends Path<T>, TValue>(
 	form: UseFormResult<T>,
 	field: FieldConfig<T, TPath, TValue>
 ): FormFieldReturnTypeFromConfig<
