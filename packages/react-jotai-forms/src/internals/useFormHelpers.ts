@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import type { useStore } from 'jotai';
-import type { MutableRefObject } from 'react';
 import type { ZodType } from 'zod';
 import type { StandardWritableAtom } from './StandardWritableAtom';
 import type { AnyPath, Path, PathValue } from '../path';
-import type { Patch, Objectish } from 'immer';
-import { applyPatches } from 'immer';
 import type { UseFieldResult } from '../useField';
 import type {
 	FieldOptions,
@@ -32,8 +29,8 @@ import type {
 	BaseAnyFieldConfigConstructor,
 } from './field-config-types';
 import { toConfigObject } from './field-config-types';
-import { getValueAtPath, getAtomForPath } from './getAtomForPath';
-import { mapAtom, noChange } from './mapAtom';
+import { getAtomForPath } from './getAtomForPath';
+import { mapAtom } from './mapAtom';
 import type {
 	FieldStateAtom,
 	FieldStatePrimitive,
@@ -94,8 +91,7 @@ export type FormFields<T, TFields extends FieldsConfig<T>> = {
 
 export type FormOptions<T> = {
 	schema: ZodType<T>;
-	defaultValue: T;
-	translation: (field: string) => string;
+	translation: (this: void, field: string) => string;
 	preSubmit?: ErrorsStrategy;
 	postSubmit?: ErrorsStrategy;
 	disabled?: PerFieldState<boolean>;
@@ -131,7 +127,6 @@ type BuildFormResultOptions<T> = {
 	formEvents: FormEvents;
 	errorStrategy: RegisterErrorStrategy;
 	formTranslation: (key: string) => string;
-	defaultValue: MutableRefObject<T>;
 	disabledFields: FieldStateAtom<boolean>;
 	readOnlyFields: FieldStateAtom<boolean>;
 };
@@ -146,7 +141,6 @@ export function buildFormResult<T>({
 	formEvents,
 	errorStrategy,
 	formTranslation,
-	defaultValue,
 	disabledFields,
 	readOnlyFields,
 }: BuildFormResultOptions<T>): UseFormResult<T> {
@@ -161,7 +155,6 @@ export function buildFormResult<T>({
 		store,
 		atom,
 		atomFamily,
-		defaultValue,
 		formEvents,
 		disabledFields,
 		readOnlyFields,
@@ -203,7 +196,6 @@ type FormResultContext<T> = Pick<
 	| 'formTranslation'
 	| 'store'
 	| 'atomFamily'
-	| 'defaultValue'
 	| 'formEvents'
 	| 'disabledFields'
 	| 'readOnlyFields'
@@ -262,22 +254,28 @@ function toField<T, TPath extends Path<T>, TValue>(
 	config: FieldConfig<T, TPath, TValue>,
 	context: FormResultContext<T>
 ): FormFieldReturnType<TValue, DefaultFormFieldResultFlags> {
+	// Types get complex due to the PathValue<T, TPath> not always being
+	// identical to TValue. Defining up top keeps things simpler.
+	type CurrentPathValue = PathValue<T, TPath>;
+	type Mapping = FieldMapping<CurrentPathValue, TValue> | undefined;
+	type Schema = ZodType<CurrentPathValue>;
+
+	const prevPath = context.translationPath;
+	const currentPath = config.translationPath ?? (config.path as AnyPath);
 	const result = toFormSubset<T, TPath, TValue>(config, context);
-	const options: Partial<FieldOptions<PathValue<T, TPath>, TValue>> = {
-		// TODO: figure out why this needs a cast
-		mapping: config.mapping as FieldOptions<
-			PathValue<T, TPath>,
-			TValue
-		>['mapping'],
-		schema: getZodSchemaForPath(config.path, context.schema),
+	const options: Partial<FieldOptions<CurrentPathValue, TValue>> = {
+		mapping: config.mapping as Mapping,
+		schema: getZodSchemaForPath(config.path, context.schema) as Schema,
+		postMappingSchemaPrefix: [...prevPath, ...currentPath],
+		postMappingSchema: config.schema,
 		errorStrategy: context.errorStrategy,
 		formEvents: context.formEvents,
 		translation: (part) =>
 			context.formTranslation(
 				[
 					'fields',
-					...context.translationPath,
-					...(config.translationPath ?? (config.path as AnyPath)),
+					...prevPath,
+					...currentPath,
 					...(typeof part === 'string' ? [part] : part),
 				].join('.')
 			),
@@ -285,7 +283,7 @@ function toField<T, TPath extends Path<T>, TValue>(
 		readOnly: substateAtom(config.readOnly, context.readOnlyFields),
 	};
 	const unmappedAtom = context.atomFamily(config.path);
-	const fieldResult = toInternalFieldAtom<PathValue<T, TPath>, TValue>(
+	const fieldResult = toInternalFieldAtom<CurrentPathValue, TValue>(
 		context.store,
 		unmappedAtom,
 		options
@@ -297,13 +295,11 @@ function toField<T, TPath extends Path<T>, TValue>(
 	};
 
 	function substateAtom<TState extends FieldStatePrimitive>(
-		value:
-			| undefined
-			| FieldStateOverride<T, PathValue<T, TPath>, TValue, TState>,
+		value: undefined | FieldStateOverride<T, CurrentPathValue, TValue, TState>,
 		state: FieldStateAtom<TState>
 	):
 		| FieldStateAtom<TState>
-		| FieldStateCallback<PerFieldState<TState>, PathValue<T, TPath>, TValue> {
+		| FieldStateCallback<PerFieldState<TState>, CurrentPathValue, TValue> {
 		if (typeof value === 'function') {
 			return (props, getter) =>
 				value(
@@ -350,8 +346,6 @@ function toFormSubset<T, TPath extends Path<T>, TValue>(
 		  )
 		: (unmappedAtom as StandardWritableAtom<TValue>);
 	const atomFamily = createPathAtomFamily(resultAtom);
-	// options.atomFamily([...path, ...nextPath] as never) as never;
-	const resultDefaultValue = getRefForPath(config, options.defaultValue);
 
 	return buildFormResult<TValue>({
 		pathPrefix: [...options.pathPrefix, ...(config.path as AnyPath)],
@@ -366,7 +360,6 @@ function toFormSubset<T, TPath extends Path<T>, TValue>(
 		formEvents: options.formEvents,
 		errorStrategy: options.errorStrategy,
 		formTranslation: options.formTranslation,
-		defaultValue: resultDefaultValue,
 		disabledFields: walkFieldStateAtom(
 			options.disabledFields,
 			config.path as AnyPath
@@ -393,44 +386,4 @@ export function createPathAtomFamily<T>(
 		(path) => getAtomForPath(path, formAtom) as StandardWritableAtom<unknown>,
 		(a, b) => toJsonPointer(a) === toJsonPointer(b)
 	) as AtomFamily<T>;
-}
-
-function getRefForPath<T, TPath extends Path<T>, TValue>(
-	config: FieldConfig<T, TPath, TValue>,
-	source: React.MutableRefObject<T>
-): React.MutableRefObject<TValue> {
-	const mapping = config.mapping as FieldMapping<PathValue<T, TPath>, TValue>;
-	const getPathValue = () =>
-		getValueAtPath<T, TPath>(config.path)(source.current);
-
-	const unmapped = {
-		get current() {
-			return getPathValue();
-		},
-		set current(value) {
-			const patches: Patch[] = [
-				{ op: 'replace', path: [...(config.path as AnyPath)], value },
-			];
-			applyPatches(getPathValue() as Objectish, patches);
-		},
-	};
-	return mapping
-		? {
-				get current() {
-					return mapping.toForm(unmapped.current);
-				},
-				set current(value) {
-					const actualValue = mapping.fromForm(value);
-					if (actualValue === noChange) return;
-					const patches: Patch[] = [
-						{
-							op: 'replace',
-							path: [...(config.path as AnyPath)],
-							value: actualValue,
-						},
-					];
-					applyPatches(getPathValue() as Objectish, patches);
-				},
-		  }
-		: (unmapped as React.MutableRefObject<TValue>);
 }

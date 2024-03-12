@@ -10,3 +10,7 @@ export type {
 	ControlledHtmlProps,
 } from './internals/HtmlProps';
 export type { UseFormResult } from './internals/UseFormResult';
+export type {
+	UseFieldsResult,
+	UseFormResultWithFields,
+} from './internals/useFormHelpers';
