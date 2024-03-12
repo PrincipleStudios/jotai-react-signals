@@ -91,7 +91,7 @@
         </PropertyGroup>
     </Target>
 
-    <Target Name="PnpmPack" BeforeTargets="Publish" DependsOnTargets="NodeBuild" Inputs="@(RestoreConfig);@(PnpmPackagedFiles);@(CompileOutputs)" Outputs="$(PackageOutputPath)$(NpmPackageNormalizedName)-$(NpmPackageVersion).tgz">
+    <Target Name="PnpmPack" BeforeTargets="Publish" DependsOnTargets="NodeBuild" Inputs="@(RestoreConfig);@(PnpmPackagedFiles);@(CompileOutputs)" Outputs="$(PackageOutputPath)$(NpmPackageNormalizedName)-$(Version).tgz">
         <PropertyGroup>
             <PackageJsonLastModifiedTime>$([System.IO.File]::GetLastWriteTime('package.json').ToString('g'))</PackageJsonLastModifiedTime>
         </PropertyGroup>
