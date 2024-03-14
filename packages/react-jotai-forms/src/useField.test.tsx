@@ -8,11 +8,7 @@ import { integerMapping } from './test/integerMapping';
 describe('useField', () => {
 	describe('with a basic number construction', () => {
 		let hook: {
-			current: UseUpdatableFieldResult<
-				number,
-				number,
-				{ hasErrors: boolean; hasTranslations: boolean }
-			>;
+			current: UseUpdatableFieldResult<number, number, { hasErrors: boolean }>;
 		};
 		let store: ReturnType<typeof getDefaultStore>;
 		beforeEach(() => {
@@ -46,7 +42,7 @@ describe('useField', () => {
 		type HookType = UseUpdatableFieldResult<
 			string,
 			string,
-			{ hasErrors: false; hasTranslations: false }
+			{ hasErrors: false }
 		>;
 		let hook: { current: HookType };
 		let store: ReturnType<typeof getDefaultStore>;
@@ -60,7 +56,6 @@ describe('useField', () => {
 		// TS tests to verify that optional properties were not provided
 		true satisfies HookType['errors'] extends undefined ? true : false;
 		true satisfies HookType['schema'] extends undefined ? true : false;
-		true satisfies HookType['translation'] extends undefined ? true : false;
 
 		it('creates a basic field for easy use with a default value', () => {
 			expect(store.get(hook.current.fieldValue)).toBe('foo');
@@ -80,13 +75,10 @@ describe('useField', () => {
 			expect(store.get(hook.current.fieldValue)).toBe('foobar');
 		});
 
-		it('adjust TS types to indicate no errors or translations will work', () => {
+		it('adjust TS types to indicate no errors work', () => {
 			// Errors were not defined, so these should be undefined
 			hook.current.errors satisfies undefined;
 			hook.current.schema satisfies undefined;
-
-			// Translations were not defined, so the translation function should be undefined
-			hook.current.translation satisfies undefined;
 		});
 
 		describe('when rendered to an input element', () => {
@@ -171,11 +163,7 @@ describe('useField', () => {
 
 	describe('with a basic number construction', () => {
 		let hook: {
-			current: UseUpdatableFieldResult<
-				number,
-				string,
-				{ hasErrors: boolean; hasTranslations: boolean }
-			>;
+			current: UseUpdatableFieldResult<number, string, { hasErrors: boolean }>;
 		};
 		let store: ReturnType<typeof getDefaultStore>;
 		beforeEach(() => {

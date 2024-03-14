@@ -37,10 +37,6 @@ const defaultValue: MyForm = {
 };
 
 describe('useForm, nested-object', () => {
-	function translation(key: string) {
-		return `translate: ${key}`;
-	}
-
 	let useFormResult: UseFormResult<MyForm>;
 	let submitSpy: jest.Mock<void, [MyForm]>;
 	let rendered: RenderResult;
@@ -97,7 +93,6 @@ describe('useForm, nested-object', () => {
 			const form = useForm({
 				schema: myFormSchema,
 				defaultValue,
-				translation,
 				fields: {
 					address: ['address'],
 				},
@@ -123,6 +118,18 @@ describe('useForm, nested-object', () => {
 			expect(renderCount).toBe(1);
 		});
 
+		it('gets the appropriate translation path', () => {
+			expect(useFormResult.field(['address']).translationPath).toEqual([
+				'address',
+			]);
+		});
+
+		it('gets the appropriate translation path when accessing deep fields', () => {
+			expect(
+				useFormResult.field(['address']).field(['city']).translationPath
+			).toEqual(['address', 'city']);
+		});
+
 		it('can submit the default values', async () => {
 			const submitButton = rendered.queryByRole('button', {
 				name: 'Submit',
@@ -142,7 +149,6 @@ describe('useForm, nested-object', () => {
 			const form = useForm({
 				schema: myFormSchemaWithValidation,
 				defaultValue,
-				translation,
 				fields: {
 					address: ['billingAddress'],
 				},
@@ -181,7 +187,6 @@ describe('useForm, nested-object', () => {
 			const form = useForm({
 				schema: myFormSchemaWithValidation,
 				defaultValue,
-				translation,
 				fields: {
 					address: ['address'],
 				},

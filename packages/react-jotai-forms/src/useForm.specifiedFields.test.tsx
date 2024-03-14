@@ -24,10 +24,6 @@ const defaultValue: MyForm = {
 };
 
 describe('useForm, specifiedFields', () => {
-	function translation(key: string) {
-		return `translate: ${key}`;
-	}
-
 	let useFormResult: UseFormResultWithFields<
 		MyForm,
 		{
@@ -71,7 +67,6 @@ describe('useForm, specifiedFields', () => {
 			useForm({
 				schema: myFormSchema,
 				defaultValue,
-				translation,
 				fields: {
 					name: { path: ['name'], schema: nameSchema },
 				},
@@ -87,7 +82,6 @@ describe('useForm, specifiedFields', () => {
 			const form = useForm({
 				schema: myFormSchema,
 				defaultValue,
-				translation,
 				fields: {
 					name: ['name'],
 				},
@@ -107,6 +101,10 @@ describe('useForm, specifiedFields', () => {
 			expect(renderCount).toBe(1);
 		});
 
+		it('gets the appropriate translation path', () => {
+			expect(useFormResult.fields.name.translationPath).toEqual(['name']);
+		});
+
 		it('can submit the default values', async () => {
 			const submitButton = rendered.queryByRole('button')!;
 			fireEvent.click(submitButton);
@@ -123,7 +121,6 @@ describe('useForm, specifiedFields', () => {
 			const form = useForm({
 				schema: myFormSchema,
 				defaultValue,
-				translation,
 				fields: {
 					name: { path: ['name'], schema: nameSchema },
 				},

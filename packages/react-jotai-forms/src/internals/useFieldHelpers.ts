@@ -12,13 +12,11 @@ import type {
 	ControlledHtmlProps,
 	InputHtmlProps,
 } from './HtmlProps';
-import type { FieldTranslation } from './FieldTranslation';
 import type { ErrorsAtom } from './ErrorsAtom';
 import { AnyPath } from '../path';
 
 export type UseFieldResultFlags = {
 	hasErrors: boolean;
-	hasTranslations: boolean;
 };
 export type ToHtmlInputProps<TInputValue> = TInputValue extends string
 	? () => InputHtmlProps
@@ -49,21 +47,20 @@ export type FieldStateCallback<T, TOriginalValue, TDerivedValue> = (
 ) => T;
 
 export type FieldOptions<TValue, TFormFieldValue> = {
-	schema: ZodType<TValue>;
-	mapping: FieldMapping<TValue, TFormFieldValue>;
-	postMappingSchemaPrefix: AnyPath;
-	postMappingSchema: ZodType<TFormFieldValue>;
-	errorStrategy: RegisterErrorStrategy;
-	formEvents: FormEvents;
-	translation: FieldTranslation;
-	disabled:
+	schema?: ZodType<TValue>;
+	mapping?: FieldMapping<TValue, TFormFieldValue>;
+	postMappingSchemaPrefix?: AnyPath;
+	postMappingSchema?: ZodType<TFormFieldValue>;
+	errorStrategy?: RegisterErrorStrategy;
+	formEvents?: FormEvents;
+	disabled?:
 		| FieldStateAtom<boolean>
 		| FieldStateCallback<PerFieldState<boolean>, TValue, TFormFieldValue>;
-	readOnly:
+	readOnly?:
 		| FieldStateAtom<boolean>
 		| FieldStateCallback<PerFieldState<boolean>, TValue, TFormFieldValue>;
 };
-export type UnmappedOptions<TValue> = Partial<FieldOptions<TValue, TValue>> & {
+export type UnmappedOptions<TValue> = FieldOptions<TValue, TValue> & {
 	mapping?: never;
 	postMappingSchema?: never;
 };
@@ -78,7 +75,4 @@ export type MappedOptions<TValue, TFieldValue> = Partial<
 type AnyFieldOptions = FieldOptions<any, any>;
 export type Flags<TOptions extends Partial<AnyFieldOptions>> = {
 	hasErrors: 'schema' extends keyof TOptions ? true : false;
-	hasTranslations: TOptions['translation'] extends FieldTranslation
-		? true
-		: false;
 };

@@ -21,10 +21,6 @@ const defaultValue: MyForm = {
 };
 
 describe('useForm, inlineFields', () => {
-	function translation(key: string) {
-		return `translate: ${key}`;
-	}
-
 	let useFormResult: UseFormResult<MyForm>;
 	let submitSpy: jest.Mock<void, [MyForm]>;
 	let rendered: RenderResult;
@@ -56,7 +52,6 @@ describe('useForm, inlineFields', () => {
 			const form = useForm({
 				schema: myFormSchema,
 				defaultValue,
-				translation,
 			});
 			useFormResult = form;
 			renderCount++;
@@ -71,6 +66,10 @@ describe('useForm, inlineFields', () => {
 		it('initializes the form to its defaults', () => {
 			expect(useFormResult.get()).toBe(defaultValue);
 			expect(renderCount).toBe(1);
+		});
+
+		it('gets the appropriate translation path', () => {
+			expect(useFormResult.field(['name']).translationPath).toEqual(['name']);
 		});
 
 		it('can submit the default values', async () => {
@@ -89,7 +88,6 @@ describe('useForm, inlineFields', () => {
 			const form = useForm({
 				schema: myFormSchemaWithValidation,
 				defaultValue,
-				translation,
 			});
 			useFormResult = form;
 			renderCount++;

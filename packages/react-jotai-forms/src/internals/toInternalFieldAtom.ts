@@ -62,12 +62,12 @@ export function toInternalFieldAtom<
 export function toInternalFieldAtom<TValue, TFieldValue>(
 	store: ReturnType<typeof useStore>,
 	fieldValueAtom: StandardWritableAtom<TValue>,
-	options: Partial<FieldOptions<TValue, TFieldValue>>
+	options: FieldOptions<TValue, TFieldValue>
 ): UseFieldResult<TFieldValue>;
 export function toInternalFieldAtom<TValue, TFieldValue>(
 	store: ReturnType<typeof useStore>,
 	fieldValueAtom: StandardWritableAtom<TValue>,
-	options: Partial<FieldOptions<TValue, TFieldValue>>
+	options: FieldOptions<TValue, TFieldValue>
 ): UseFieldResult<TFieldValue> {
 	const fieldEvents = new FieldEvents(options.formEvents);
 	const mapping: FieldMapping<TValue, TFieldValue> =
@@ -157,7 +157,6 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 		getValue: () => store.get(formValueAtom),
 		schema: options.postMappingSchema ?? schema,
 		errors,
-		translation: options.translation,
 		onChange(v: TFieldValue | ((prev: TFieldValue) => TFieldValue)) {
 			fieldEvents.dispatchEvent(FieldEvents.Change);
 			setValue(v);
@@ -193,7 +192,7 @@ export function toInternalFieldAtom<TValue, TFieldValue>(
 			},
 			// TODO - should we require a post-mapping schema?
 			postMappingSchema: undefined,
-		} satisfies Partial<FieldOptions<TValue, TNew>>;
+		} satisfies FieldOptions<TValue, TNew>;
 		const result = toInternalFieldAtom(store, fieldValueAtom, newOptions);
 		mappings.set(newMapping, result);
 		return result;
