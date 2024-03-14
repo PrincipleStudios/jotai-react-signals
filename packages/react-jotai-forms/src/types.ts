@@ -13,4 +13,5 @@ export type { UseFormResult } from './internals/UseFormResult';
 export type {
 	UseFieldsResult,
 	UseFormResultWithFields,
+	DefaultFormFieldResultFlags,
 } from './internals/useFormHelpers';
