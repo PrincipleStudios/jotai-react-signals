@@ -22,10 +22,6 @@ const myFormSchemaWithValidation = z
 const defaultValue: MyForm = [''];
 
 describe('useForm, array', () => {
-	function translation(key: string) {
-		return `translate: ${key}`;
-	}
-
 	let useFormResult: UseFormResult<MyForm>;
 	let submitSpy: jest.Mock<void, [MyForm]>;
 	let rendered: RenderResult;
@@ -78,7 +74,6 @@ describe('useForm, array', () => {
 			const form = useForm({
 				schema: myFormSchema,
 				defaultValue,
-				translation,
 			});
 			useFormResult = form;
 			renderCount++;
@@ -113,7 +108,6 @@ describe('useForm, array', () => {
 			const form = useForm({
 				schema: myFormSchemaWithValidation,
 				defaultValue,
-				translation,
 			});
 			useFormResult = form;
 			renderCount++;
@@ -128,6 +122,10 @@ describe('useForm, array', () => {
 		it('initializes the form to its defaults', () => {
 			expect(useFormResult.get()).toBe(defaultValue);
 			expect(renderCount).toBe(1);
+		});
+
+		it('gets the appropriate translation path', () => {
+			expect(useFormResult.field([0]).translationPath).toEqual([0]);
 		});
 
 		it('does not have error messages initially', async () => {

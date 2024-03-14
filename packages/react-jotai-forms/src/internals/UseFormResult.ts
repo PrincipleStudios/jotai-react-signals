@@ -21,7 +21,6 @@ export interface UseFormResult<T> {
 	formEvents: FormEvents;
 	disabledFields: FieldStateAtom<boolean>;
 	readOnlyFields: FieldStateAtom<boolean>;
-	formTranslation: (this: void, field: string) => string;
 	field<TPath extends Path<T>>(
 		this: void,
 		path: TPath

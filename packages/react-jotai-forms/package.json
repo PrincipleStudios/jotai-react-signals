@@ -1,6 +1,6 @@
 {
 	"name": "@principlestudios/react-jotai-forms",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"description": "👻 React Forms using Jotai",
 	"main": "dist/index.js",
 	"module": "dist/mjs/index.js",
@@ -32,10 +32,8 @@
 		}
 	},
 	"scripts": {
-		"prebuild": "pwsh ./scripts/pre-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
 		"build": "npm run build:dts && rollup -c",
 		"build:dts": "tsc --build --force tsconfig.dts.json",
-		"postbuild": "pwsh ./scripts/post-build.ps1 -ExecutionPolicy Unrestricted -NoProfile",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"lint": "npm run typecheck && npm run eslint && npm run prettier",

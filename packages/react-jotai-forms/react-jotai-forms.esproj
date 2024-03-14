@@ -5,4 +5,8 @@
 		<ProjectReference Include="../jotai-utilities/jotai-utilities.esproj" />
 		<ProjectReference Include="../react-jotai-form-components/react-jotai-form-components.esproj" />
 	</ItemGroup>
+
+	<Target Name="PreNodeBuild" BeforeTargets="NodeBuild">
+		<RemoveDir Directories="dist" />
+	</Target>
 </Project>

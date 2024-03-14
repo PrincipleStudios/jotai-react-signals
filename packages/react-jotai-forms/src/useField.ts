@@ -13,7 +13,6 @@ import type {
 	ToHtmlProps,
 } from './internals/useFieldHelpers';
 import type { ErrorsAtom } from './internals/ErrorsAtom';
-import type { FieldTranslation } from './internals/FieldTranslation';
 import type { FieldMapping } from './internals/FieldMapping';
 import type { UseFieldResultFlags } from './internals/useFieldHelpers';
 import type { IfTrueThenProp } from './internals/type-helpers';
@@ -63,14 +62,7 @@ export type UseFieldResult<
 		/** An atom representing field errors. (Conditional property, only present if a schema was provided when the form or field was set up.) */
 		errors: ErrorsAtom;
 	}
-> &
-	IfTrueThenProp<
-		TFlags['hasTranslations'],
-		{
-			/** The translation information for the field. (Conditional property, only present if a translation function was provided when the form or field was set up.) */
-			translation: FieldTranslation;
-		}
-	>;
+>;
 
 export type UseUpdatableFieldResult<
 	TValue,
@@ -83,7 +75,7 @@ export type UseUpdatableFieldResult<
 
 function useInternalFieldAtom<TValue, TFieldValue>(
 	fieldValueAtom: StandardWritableAtom<TValue>,
-	options: Partial<FieldOptions<TValue, TFieldValue>> = {}
+	options: FieldOptions<TValue, TFieldValue>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): UseFieldResult<TFieldValue, any> {
 	const store = useStore();
@@ -116,7 +108,7 @@ export function useField<
 	: UseUpdatableFieldResult<TValue, TValue, Flags<TOptions>>;
 export function useField<TValue, TFieldValue>(
 	defaultValue: TValue,
-	options: Partial<FieldOptions<TValue, TFieldValue>> = {}
+	options: FieldOptions<TValue, TFieldValue>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): UseUpdatableFieldResult<TValue, TFieldValue, any> {
 	const fieldValueAtom = useConstant(() => atom<TValue>(defaultValue));

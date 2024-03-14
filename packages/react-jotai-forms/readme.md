@@ -41,11 +41,9 @@ type FormDemoProps = {
 };
 
 export function FormDemo({ onSubmit }: FormDemoProps) {
-	const { t } = useTranslation(['demo']);
 	const form = useForm({
 		schema: myFormSchema,
 		defaultValue,
-		translation: t,
 		fields: {
 			name: ['name'],
 		},

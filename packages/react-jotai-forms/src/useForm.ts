@@ -65,7 +65,6 @@ export function useFormAtom<T>(
 				schema: options.schema,
 				formEvents,
 				errorStrategy: strategy,
-				formTranslation: options.translation,
 				disabledFields: toAtomFieldState(options.disabled ?? false),
 				readOnlyFields: toAtomFieldState(options.readOnly ?? false),
 			});

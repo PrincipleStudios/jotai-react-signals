@@ -50,7 +50,6 @@ export type ConfiguredFormField<
 
 export type DefaultFormFieldResultFlags = {
 	hasErrors: true;
-	hasTranslations: true;
 };
 type FlagsForFormFieldConfig<
 	T,
@@ -91,7 +90,6 @@ export type FormFields<T, TFields extends FieldsConfig<T>> = {
 
 export type FormOptions<T> = {
 	schema: ZodType<T>;
-	translation: (this: void, field: string) => string;
 	preSubmit?: ErrorsStrategy;
 	postSubmit?: ErrorsStrategy;
 	disabled?: PerFieldState<boolean>;
@@ -126,7 +124,6 @@ type BuildFormResultOptions<T> = {
 	schema: ZodType<T>;
 	formEvents: FormEvents;
 	errorStrategy: RegisterErrorStrategy;
-	formTranslation: (key: string) => string;
 	disabledFields: FieldStateAtom<boolean>;
 	readOnlyFields: FieldStateAtom<boolean>;
 };
@@ -140,7 +137,6 @@ export function buildFormResult<T>({
 	schema,
 	formEvents,
 	errorStrategy,
-	formTranslation,
 	disabledFields,
 	readOnlyFields,
 }: BuildFormResultOptions<T>): UseFormResult<T> {
@@ -151,7 +147,6 @@ export function buildFormResult<T>({
 		translationPath,
 		schema,
 		errorStrategy,
-		formTranslation,
 		store,
 		atom,
 		atomFamily,
@@ -193,7 +188,6 @@ type FormResultContext<T> = Pick<
 	| 'translationPath'
 	| 'schema'
 	| 'errorStrategy'
-	| 'formTranslation'
 	| 'store'
 	| 'atomFamily'
 	| 'formEvents'
@@ -263,22 +257,13 @@ function toField<T, TPath extends Path<T>, TValue>(
 	const prevPath = context.translationPath;
 	const currentPath = config.translationPath ?? (config.path as AnyPath);
 	const result = toFormSubset<T, TPath, TValue>(config, context);
-	const options: Partial<FieldOptions<CurrentPathValue, TValue>> = {
+	const options: FieldOptions<CurrentPathValue, TValue> = {
 		mapping: config.mapping as Mapping,
 		schema: getZodSchemaForPath(config.path, context.schema) as Schema,
 		postMappingSchemaPrefix: [...prevPath, ...currentPath],
 		postMappingSchema: config.schema,
 		errorStrategy: context.errorStrategy,
 		formEvents: context.formEvents,
-		translation: (part) =>
-			context.formTranslation(
-				[
-					'fields',
-					...prevPath,
-					...currentPath,
-					...(typeof part === 'string' ? [part] : part),
-				].join('.')
-			),
 		disabled: substateAtom(config.disabled, context.disabledFields),
 		readOnly: substateAtom(config.readOnly, context.readOnlyFields),
 	};
@@ -359,7 +344,6 @@ function toFormSubset<T, TPath extends Path<T>, TValue>(
 		schema,
 		formEvents: options.formEvents,
 		errorStrategy: options.errorStrategy,
-		formTranslation: options.formTranslation,
 		disabledFields: walkFieldStateAtom(
 			options.disabledFields,
 			config.path as AnyPath
