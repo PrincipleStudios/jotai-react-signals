@@ -9,6 +9,7 @@ import {
 	memo,
 } from 'react';
 import { isAtom } from '@principlestudios/jotai-utilities/isAtom';
+import { currentValue } from '@principlestudios/jotai-utilities/currentValue';
 import {
 	mapStyle,
 	type Mapping,
@@ -71,7 +72,7 @@ function toPropsObj<
 					Object.fromEntries(
 						Object.entries(value as CSSProperties).map(([k, v]) => [
 							k,
-							isAtom(v) ? get(v) : v,
+							currentValue(v),
 						])
 					),
 				];

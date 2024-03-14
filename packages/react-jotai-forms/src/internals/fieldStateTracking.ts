@@ -3,6 +3,7 @@ import { atom } from 'jotai';
 import type { AnyPath } from '../path';
 import { produce } from 'immer';
 import { isAtom } from '@principlestudios/jotai-utilities/isAtom';
+import { currentValue } from '@principlestudios/jotai-utilities/currentValue';
 
 export type SetStateNoInitialAction<T> = (prev: T | undefined) => T;
 export type NoInitialWritableAtom<Value> = WritableAtom<
@@ -30,11 +31,11 @@ export function toWritableAtom<T extends FieldStatePrimitive>(
 	return atom(
 		(get) => {
 			const temp = get(fieldState);
-			return isAtom(temp) ? get(temp) : temp;
+			return currentValue(temp);
 		},
 		(get, set, action) => {
 			let temp = get(fieldState);
-			temp = isAtom(temp) ? get(temp) : temp;
+			temp = currentValue(temp);
 			set(
 				fieldState,
 				typeof action === 'function' ? action(temp) : () => action
