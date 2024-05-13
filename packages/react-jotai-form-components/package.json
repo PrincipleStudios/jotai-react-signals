@@ -1,6 +1,6 @@
 {
 	"name": "@principlestudios/react-jotai-form-components",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "👻 Form components for use with @principlestudios/react-jotai-form",
 	"private": false,
 	"bugs": {
